@@ -54,8 +54,8 @@ for(var i = 0; i < rand; i++) {
 
         // 1 for rectangle
         case 1:
-            var width = Math.random() * 200 + 1 ,
-                height = Math.random() * 200 + 1;
+            var width = Math.random() * 180 + 20,
+                height = Math.random() * 180 + 20;
             shape = Bodies.rectangle(randX, randY, width, height, {isStatic: true});
             break;
 
@@ -65,12 +65,12 @@ for(var i = 0; i < rand; i++) {
             shape = Bodies.circle(randX, randY, radius, {isStatic: true});
             break;
 
-        // 3 and 4 for equalateral or right triangle
+        // 3 and 4 for isoceles or right triangle
         case 3:
         case 4:
             var slope = randshape - 2;
-            var width = Math.random() * 200 + 1,
-                height = Math.random() * 200 + 1;
+            var width = Math.random() * 180 + 20,
+                height = Math.random() * 180 + 20;
             shape = Bodies.trapezoid(randX, randY, width, height, slope, {isStatic: true});
             break;
     }
@@ -89,3 +89,11 @@ Engine.run(engine);
 
 // run the renderer
 Render.run(render);
+
+console.log(shapes);
+
+Events.on(engine, 'collisionActive', function(event) {
+    var speed = fruit.speed;
+    var angular = fruit.angularSpeed;
+    console.log(speed + " " + angular);
+});
