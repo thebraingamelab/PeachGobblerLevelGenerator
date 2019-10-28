@@ -41,6 +41,7 @@ var butWidth = 100;
 var butHeight = 50;
 var button = Bodies.rectangle(700, 100, butWidth, butHeight, {isStatic: true});
 
+
 // add all of the bodies to the world
 World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button, obst0, obst1]);
 

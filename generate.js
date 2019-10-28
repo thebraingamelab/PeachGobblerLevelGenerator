@@ -32,13 +32,17 @@ Body.rotate(teethA, 7 * (Math.PI/6));
 var teethB = Bodies.polygon(430, 600, 3, 20, {isStatic: true})
 Body.rotate(teethB, 7 * (Math.PI/6));
 
-shapes = [ground, fruit, base, mouth, teethA, teethB];
+var butWidth = 100;
+var butHeight = 50;
+var button = Bodies.rectangle(700, 100, butWidth, butHeight, {isStatic: true});
+
+shapes = [ground, fruit, base, mouth, teethA, teethB, button];
 
 for(var i = 0; i < rand; i++) {
     var randshape = Math.floor(Math.random() * 5);
 
     var randX = Math.random() * 600 + 100,
-        randY = Math.random() * 300 + 150;
+        randY = Math.random() * 250 + 150;
     
     var shape;
 
