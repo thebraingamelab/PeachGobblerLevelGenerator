@@ -29,8 +29,11 @@ function gen() {
 
     var ground = Bodies.rectangle(500, 800, 1010, 60, {isStatic: true});
     var fruit0 = Bodies.circle(400, 50, 5);
+    fruit0.collisionFilter.group = -7;
+    var fruit1 = Bodies.circle(410, 50, 5);
+    fruit1.collisionFilter.group = -7;
 
-    shapes = [ground, fruit0];
+    shapes = [ground, fruit0, fruit1];
 
     var rand = Math.ceil(Math.random() * 7) + 3;
 
@@ -99,10 +102,11 @@ function gen() {
 
         // if one is floor and the other is fruit, level is beatable
         // returns -1 if level is a straight fall
-        if((bodyA === fruit0 || bodyB === fruit0) && (bodyA === ground || bodyB === ground))
+        if((bodyA === fruit0 || bodyB === fruit0 || bodyA === fruit1 || bodyB === fruit1) && (bodyA === ground || bodyB === ground))
         {
             var a = fruit0.position.x == 400 ? 0 : 1;
             var b = shapes;
+            var c = fruit1.position.x == 400 ? 0 : 1;
 
             console.log(a);
             console.log(b);
@@ -114,15 +118,15 @@ function gen() {
     });
 
     Events.on(engine, 'collisionActive', function(event) {
-        var speed = fruit0.speed;
-        var angular = fruit0.angularSpeed;
+        var speed = fruit.speed;
+        var angular = fruit.angularSpeed;
     });
 }
 
-// stops render and engine and makes it ready to restart
-
 function kill(render, engine)
 {
+    // stops render and makes it ready to restart
+
     Matter.Render.stop(render); // this only stop renderer but not destroy canvas
     Matter.World.clear(engine.world);
     Matter.Engine.clear(engine);
