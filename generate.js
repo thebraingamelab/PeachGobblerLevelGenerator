@@ -24,7 +24,7 @@ function gen() {
         engine: engine
     });
 
-    var killTime = setTimeout( function(){console.log("Score: " + score()); kill(render, engine);} , 5000);
+    setTimeout( function(){console.log("Score: " + score()); kill(render, engine);} , 5000);
 
     var shapes = [];
 
@@ -139,7 +139,6 @@ function gen() {
             return -1;
         }
         else{
-            var numCol = 0;
 
             // to check to see if they are at roughly the same elevation
             var y0 = Math.round(fruit0.position.y);
@@ -148,34 +147,28 @@ function gen() {
             var y3 = Math.round(fruit3.position.y);
             var y4 = Math.round(fruit4.position.y);
 
-            var disp = 0;
+            var xs = [fruit0.position.x];
 
             if(y0 == y1){
-                disp += Math.abs(fruit0.position.x - fruit1.position.x)
-                numCol++;
+                xs[xs.length] = fruit1.position.x;
             }
             if(y0 == y2){
-                disp += Math.abs(fruit0.position.x - fruit2.position.x)
-                numCol++;
+                xs[xs.length] = fruit2.position.x;
             }
             if(y0 == y3){
-                disp += Math.abs(fruit0.position.x - fruit3.position.x)
-                numCol++;
+                xs[xs.length] = fruit3.position.x;
             }
             if(y0 == y4){
-                disp += Math.abs(fruit0.position.x - fruit4.position.x)
-                numCol++
+                xs[xs.length] = fruit4.position.x;
             }
         }
-        console.log("Collisions: " + numCol);
-        return disp/numCol;
+        return variance(xs);
     }
 }
 
 // stops render and engine and makes it ready to restart
 
-function kill(render, engine)
-{
+function kill(render, engine) {
     Matter.Render.stop(render); // this only stop renderer but not destroy canvas
     Matter.World.clear(engine.world);
     Matter.Engine.clear(engine);
@@ -189,6 +182,21 @@ function kill(render, engine)
 
     console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable/total + "%)");
     gen();
+}
+
+function variance(nums) {
+    console.log("Nums: " + nums);
+    var mean = 0;
+    for (var i = 0; i < nums.length; i++) {
+        mean += nums[i];
+    }
+    mean /= nums.length;
+
+    var numerator = 0;
+    for (var i = 0; i < nums.length; i++) {
+        numerator += Math.pow(nums[i] - mean, 2);
+    }
+    return numerator/(nums.length - 1);
 }
 
 gen();
