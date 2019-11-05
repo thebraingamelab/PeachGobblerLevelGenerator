@@ -1,4 +1,6 @@
 var canv = canvas;
+var beatable = 0;
+var total = 0;
 
 function gen() {
     // module aliases
@@ -11,7 +13,6 @@ function gen() {
 
     // create an engine
     var engine = Engine.create();
-    engine.timing.timeScale = 1;
 
     // create a renderer
     var render = Render.create({
@@ -23,14 +24,28 @@ function gen() {
         engine: engine
     });
 
-    var killTime = setTimeout( function(){ kill(render, engine)} , 10000);
+    var killTime = setTimeout( function(){console.log("Score: " + score()); kill(render, engine);} , 5000);
 
     var shapes = [];
 
     var ground = Bodies.rectangle(500, 800, 1010, 60, {isStatic: true});
-    var fruit0 = Bodies.circle(400, 50, 5);
+    ground.collisionFilter.mask = -1;
 
-    shapes = [ground, fruit0];
+    var winable = false;
+
+    // tried compressing into array, caused unexpected breaking.
+    var fruit0 = Bodies.circle(400, 50, 5);
+    fruit0.collisionFilter.group = -1;
+    var fruit1 = Bodies.circle(401, 50, 5);
+    fruit1.collisionFilter.group = -1;
+    var fruit2 = Bodies.circle(400, 51, 5);
+    fruit2.collisionFilter.group = -1;
+    var fruit3 = Bodies.circle(399, 50, 5);
+    fruit3.collisionFilter.group = -1;
+    var fruit4 = Bodies.circle(400, 49, 5);
+    fruit4.collisionFilter.group = -1;
+
+    shapes = [ground, fruit0, fruit1, fruit2, fruit3, fruit4];
 
     var rand = Math.ceil(Math.random() * 7) + 3;
 
@@ -74,6 +89,7 @@ function gen() {
                 shape = Bodies.trapezoid(randX, randY, width, height, slope, {isStatic: true});
                 break;
         }
+        shape.collisionFilter.mask = -1;
 
         var rot = Math.random() * 2;
 
@@ -90,33 +106,70 @@ function gen() {
     // run the renderer
     Render.run(render);
 
-    console.log(shapes);
+    //console.log(shapes);
 
     Events.on(engine, 'collisionStart', function(event) {
         var pairs = event.pairs;
         var bodyA = pairs[0].bodyA;
         var bodyB = pairs[0].bodyB;
+        var once = true;
 
         // if one is floor and the other is fruit, level is beatable
-        // returns -1 if level is a straight fall
+        // level is considered not beatable if fruit does not move
         if((bodyA === fruit0 || bodyB === fruit0) && (bodyA === ground || bodyB === ground))
         {
-            var a = fruit0.position.x == 400 ? 0 : 1;
+            var a = fruit0.position.x != 400;
             var b = shapes;
 
-            console.log(a);
-            console.log(b);
-
-            clearTimeout(killTime);
-
-            kill(render, engine);
+            if(a && once){
+                //console.log(b);
+                once = false;
+                beatable++;
+                winable = true;
+            }
         }
     });
 
-    Events.on(engine, 'collisionActive', function(event) {
-        var speed = fruit0.speed;
-        var angular = fruit0.angularSpeed;
-    });
+    // Scoring algorithm
+    // Finds distance from error fruit to real fruit, and adds it together
+    function score()
+    {
+        // returns -1 if not beatable
+        if(!winable){
+            return -1;
+        }
+        else{
+            var numCol = 0;
+
+            // to check to see if they are at roughly the same elevation
+            var y0 = Math.round(fruit0.position.y);
+            var y1 = Math.round(fruit1.position.y);
+            var y2 = Math.round(fruit2.position.y);
+            var y3 = Math.round(fruit3.position.y);
+            var y4 = Math.round(fruit4.position.y);
+
+            var disp = 0;
+
+            if(y0 == y1){
+                disp += Math.abs(fruit0.position.x - fruit1.position.x)
+                numCol++;
+            }
+            if(y0 == y2){
+                disp += Math.abs(fruit0.position.x - fruit2.position.x)
+                numCol++;
+            }
+            if(y0 == y3){
+                disp += Math.abs(fruit0.position.x - fruit3.position.x)
+                numCol++;
+            }
+            if(y0 == y4){
+                disp += Math.abs(fruit0.position.x - fruit4.position.x)
+                numCol++
+            }
+        }
+        console.log("Collisions: " + numCol);
+        return disp/numCol;
+    }
 }
 
 // stops render and engine and makes it ready to restart
@@ -132,6 +185,9 @@ function kill(render, engine)
     render.context = null;
     render.textures = {};
 
+    total++;
+
+    console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable/total + "%)");
     gen();
 }
 
