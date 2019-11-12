@@ -219,6 +219,7 @@ function kill(render, engine) {
     total++;
 
     console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable/total + "%)");
+    gen();
 }
 
 function variance(nums) {
@@ -267,6 +268,4 @@ function decode(shapesText){
     return shapes;
 }
 
-while(true) {
-    gen();
-}
+gen();
