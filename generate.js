@@ -14,7 +14,9 @@ var engine,
     fruit,
     rand,
     genshapes,
-    encodedShapes;
+    encodedShapes,
+    rot,
+    encodeShape;
 
 // module aliases
 var Engine = Matter.Engine,
@@ -125,12 +127,12 @@ function gen() {
         }
         shape.collisionFilter.mask = -1;
 
-        var rot = Math.random() * 2 * Math.PI;
+        rot = Math.random() * 2 * Math.PI;
 
         Body.rotate(shape, rot);
         genshapes[i] = shape;
 
-        var encodeShape = {
+        encodeShape = {
             xpos : randX,
             ypos : randY,
             shapeType : randshape,
