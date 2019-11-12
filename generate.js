@@ -24,7 +24,7 @@ function gen() {
         engine: engine
     });
 
-    var time = setTimeout( function(){console.log("Score: " + score()); kill(render, engine);} , 5000);
+    var time = setTimeout( function(){console.log("Score: " + score()); kill(render, engine); return;} , 5000);
 
     var shapes = [];
 
@@ -147,8 +147,10 @@ function gen() {
         // level is considered not beatable if fruit does not move
         if((bodyA === fruit[0] || bodyB === fruit[0]) && (bodyA === ground || bodyB === ground)){
             if(fruit[0].position.x == 400) {
+                console.log("Score: " + score());
                 clearTimeout(time);
                 kill(render, engine);
+                return;
             }
         }
     });
@@ -170,6 +172,7 @@ function gen() {
                     console.log("Score: " + score()); 
                     clearTimeout(time);
                     kill(render, engine);
+                    return;
                 }
             }
         }
@@ -216,7 +219,6 @@ function kill(render, engine) {
     total++;
 
     console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable/total + "%)");
-    gen();
 }
 
 function variance(nums) {
@@ -265,4 +267,6 @@ function decode(shapesText){
     return shapes;
 }
 
-gen();
+while(true) {
+    gen();
+}
