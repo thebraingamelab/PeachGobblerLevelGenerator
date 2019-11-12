@@ -2,20 +2,34 @@ var canv = canvas;
 var beatable = 0;
 var total = 0;
 
+// all variables from gen are global to allow for data replacement
+var engine,
+    renderer,
+    time,
+    shapes,
+    ground,
+    hits,
+    win,
+    xposs,
+    fruit,
+    rand,
+    genshapes,
+    encodedShapes;
+
 // module aliases
 var Engine = Matter.Engine,
-Render = Matter.Render,
-World = Matter.World,
-Bodies = Matter.Bodies,
-Body = Matter.Body,
-Events = Matter.Events;
+    Render = Matter.Render,
+    World = Matter.World,
+    Bodies = Matter.Bodies,
+    Body = Matter.Body,
+    Events = Matter.Events;
 
 function gen() {
     // create an engine
-    var engine = Engine.create();
+    engine = Engine.create();
 
     // create a renderer
-    var render = Render.create({
+    render = Render.create({
         element: document.body,
         canvas: canv,
         options: {
@@ -24,18 +38,18 @@ function gen() {
         engine: engine
     });
 
-    var time = setTimeout( function(){console.log("Score: " + score()); kill(render, engine); return;} , 5000);
+    time = setTimeout( function(){console.log("Score: " + score()); kill(render, engine); return;} , 5000);
 
-    var shapes = [];
+    shapes = [];
 
-    var ground = Bodies.rectangle(500, 620, 1010, 60, {isStatic: true});
+    ground = Bodies.rectangle(500, 620, 1010, 60, {isStatic: true});
     ground.collisionFilter.mask = -1;
 
-    var hits = 0;
-        win = false,
-        xposs = [];
+    hits = 0;
+    win = false;
+    xposs = [];
 
-    var fruit = [];
+    fruit = [];
     fruit[0] = Bodies.circle(400, 50, 5);
     fruit[1] = Bodies.circle(401, 50, 5);
     fruit[2] = Bodies.circle(400, 51, 5);
@@ -48,10 +62,10 @@ function gen() {
 
     shapes = [ground].concat(fruit);
 
-    var rand = Math.ceil(Math.random() * 7) + 3;
+    rand = Math.ceil(Math.random() * 7) + 3;
 
-    var genshapes = [],
-        encodedShapes = [];
+    genshapes = [];
+    encodedShapes = [];
 
     for(var i = 0; i < rand; i++) {
         var randshape = Math.floor(Math.random() * 5);
