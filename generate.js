@@ -14,9 +14,7 @@ var engine,
     fruit,
     rand,
     genshapes,
-    encodedShapes,
-    rot,
-    encodeShape;
+    encodedShapes;
 
 // module aliases
 var Engine = Matter.Engine,
@@ -201,10 +199,8 @@ function gen() {
         if(!win){
             return -1;
         }
-        else{
-            beatable++;
-            // to check to see if they are at roughly the same elevation
-        }
+        beatable++;
+        // to check to see if they are at roughly the same elevation
         var vari = variance(xposs)
             encode = {
                 info : encodedShapes,
@@ -212,7 +208,6 @@ function gen() {
             };
         console.log(encode);
         console.log(JSON.stringify(encode));
-        console.log();
         console.log(decode(JSON.stringify(encode)));
         return vari;
     }
