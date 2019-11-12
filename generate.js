@@ -150,7 +150,6 @@ function gen() {
                 console.log("Score: " + score());
                 clearTimeout(time);
                 kill(render, engine);
-                return;
             }
         }
     });
@@ -172,7 +171,6 @@ function gen() {
                     console.log("Score: " + score()); 
                     clearTimeout(time);
                     kill(render, engine);
-                    return;
                 }
             }
         }
