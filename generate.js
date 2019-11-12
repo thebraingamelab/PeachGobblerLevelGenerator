@@ -38,7 +38,7 @@ function gen() {
         engine: engine
     });
 
-    time = setTimeout( function(){console.log("Score: " + score()); kill(render, engine); return;} , 5000);
+    time = setTimeout( function(){kill(render, engine);} , 5000);
 
     shapes = [];
 
@@ -161,7 +161,6 @@ function gen() {
         // level is considered not beatable if fruit does not move
         if((bodyA === fruit[0] || bodyB === fruit[0]) && (bodyA === ground || bodyB === ground)){
             if(fruit[0].position.x == 400) {
-                console.log("Score: " + score());
                 clearTimeout(time);
                 kill(render, engine);
             }
@@ -182,40 +181,19 @@ function gen() {
 
                 if(win)
                 {
-                    console.log("Score: " + score()); 
                     clearTimeout(time);
                     kill(render, engine);
                 }
             }
         }
     });
-
-
-    // Scoring algorithm
-    // Finds distance from error fruit to real fruit, and adds it together
-    function score()
-    {
-        // returns -1 if not beatable
-        if(!win){
-            return -1;
-        }
-        beatable++;
-        // to check to see if they are at roughly the same elevation
-        var vari = variance(xposs)
-            encode = {
-                info : encodedShapes,
-                score : vari
-            };
-        console.log(encode);
-        console.log(JSON.stringify(encode));
-        console.log(decode(JSON.stringify(encode)));
-        return vari;
-    }
 }
 
 // stops render and engine and makes it ready to restart
 
 function kill(render, engine) {
+    console.log("Score: " + score());
+
     Matter.Render.stop(render); // this only stop renderer but not destroy canvas
     Matter.World.clear(engine.world);
     Matter.Engine.clear(engine);
@@ -276,5 +254,46 @@ function decode(shapesText){
 
     return shapes;
 }
+
+    // Scoring algorithm
+    // Finds distance from error fruit to real fruit, and adds it together
+    function score()
+    {
+        // returns -1 if not beatable
+        if(!win){
+            return -1;
+        }
+        beatable++;
+        saveGameplayData(vari, encodedShapes);
+        return vari;
+    }
+
+    function saveGameplayData(score, geo){
+  
+        var payload = {
+          LevelID: randomID(8),
+          Score : score,
+          Geometry : geo
+        };
+      
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.thebraingamelab.org/peachgobblerlevelsave');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+          if(xhr.status == 200){
+          }
+        };
+        xhr.send(JSON.stringify(payload));     
+      }
+
+      function randomID(length){
+        var result = '';
+        length = (typeof length == 'undefined') ? 32 : length;
+        var chars = '0123456789abcdefghjklmnopqrstuvwxyz';
+        for(var i = 0; i<length; i++){
+          result += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return result;
+    }
 
 gen();
