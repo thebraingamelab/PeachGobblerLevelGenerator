@@ -2,15 +2,15 @@ var canv = canvas;
 var beatable = 0;
 var total = 0;
 
-function gen() {
-    // module aliases
-    var Engine = Matter.Engine,
-        Render = Matter.Render,
-        World = Matter.World,
-        Bodies = Matter.Bodies,
-        Body = Matter.Body,
-        Events = Matter.Events;
+// module aliases
+var Engine = Matter.Engine,
+Render = Matter.Render,
+World = Matter.World,
+Bodies = Matter.Bodies,
+Body = Matter.Body,
+Events = Matter.Events;
 
+function gen() {
     // create an engine
     var engine = Engine.create();
 
@@ -24,30 +24,34 @@ function gen() {
         engine: engine
     });
 
-    setTimeout( function(){console.log("Score: " + score()); kill(render, engine);} , 5000);
+    var time = setTimeout( function(){console.log("Score: " + score()); kill(render, engine);} , 5000);
 
     var shapes = [];
 
-    var ground = Bodies.rectangle(500, 800, 1010, 60, {isStatic: true});
+    var ground = Bodies.rectangle(500, 620, 1010, 60, {isStatic: true});
     ground.collisionFilter.mask = -1;
 
-    var winable = false;
+    var hits = 0;
+        win = false,
+        xposs = [];
 
-    // tried compressing into array, caused unexpected breaking.
-    var fruit0 = Bodies.circle(400, 50, 5);
-    fruit0.collisionFilter.group = -1;
-    var fruit1 = Bodies.circle(401, 50, 5);
-    fruit1.collisionFilter.group = -1;
-    var fruit2 = Bodies.circle(400, 51, 5);
-    fruit2.collisionFilter.group = -1;
-    var fruit3 = Bodies.circle(399, 50, 5);
-    fruit3.collisionFilter.group = -1;
-    var fruit4 = Bodies.circle(400, 49, 5);
-    fruit4.collisionFilter.group = -1;
+    var fruit = [];
+    fruit[0] = Bodies.circle(400, 50, 5);
+    fruit[1] = Bodies.circle(401, 50, 5);
+    fruit[2] = Bodies.circle(400, 51, 5);
+    fruit[3] = Bodies.circle(399, 50, 5);
+    fruit[4] = Bodies.circle(400, 49, 5);
 
-    shapes = [ground, fruit0, fruit1, fruit2, fruit3, fruit4];
+    for(var i = 0; i < fruit.length; i++) {
+        fruit[i].collisionFilter.group = -1;
+    }
+
+    shapes = [ground].concat(fruit);
 
     var rand = Math.ceil(Math.random() * 7) + 3;
+
+    var genshapes = [],
+        encodedShapes = [];
 
     for(var i = 0; i < rand; i++) {
         var randshape = Math.floor(Math.random() * 5);
@@ -56,6 +60,7 @@ function gen() {
             randY = Math.random() * 250 + 150;
         
         var shape;
+            prop = {};
 
         switch(randshape){
 
@@ -64,6 +69,9 @@ function gen() {
             default:
             case 0:
                 var side = Math.random() * 200 + 1;
+                prop = {
+                    length : side
+                };
                 shape = Bodies.rectangle(randX, randY, side, side, {isStatic: true});
                 break;
 
@@ -71,31 +79,54 @@ function gen() {
             case 1:
                 var width = Math.random() * 180 + 20,
                     height = Math.random() * 180 + 20;
+                prop = {
+                    width : width,
+                    height : height
+                };
                 shape = Bodies.rectangle(randX, randY, width, height, {isStatic: true});
                 break;
 
             // 2 for circle
             case 2:
                 var radius = Math.random() * 100 + 1;
+                prop = {
+                    radius : radius
+                };
                 shape = Bodies.circle(randX, randY, radius, {isStatic: true});
                 break;
 
             // 3 and 4 for isoceles or right triangle
             case 3:
             case 4:
-                var slope = randshape - 2;
-                var width = Math.random() * 180 + 20,
+                var slope = randshape - 2,
+                    width = Math.random() * 180 + 20,
                     height = Math.random() * 180 + 20;
+                prop = {
+                    slope : slope,
+                    width : width,
+                    height : height
+                }
                 shape = Bodies.trapezoid(randX, randY, width, height, slope, {isStatic: true});
                 break;
         }
         shape.collisionFilter.mask = -1;
 
-        var rot = Math.random() * 2;
+        var rot = Math.random() * 2 * Math.PI;
 
-        Body.rotate(shape, Math.PI * rot);
-        shapes[shapes.length] = shape;
+        Body.rotate(shape, rot);
+        genshapes[i] = shape;
+
+        var encodeShape = {
+            xpos : randX,
+            ypos : randY,
+            shapeType : randshape,
+            rotation : rot,
+            properties : prop
+        };
+        encodedShapes[i] = encodeShape;
     }
+
+    shapes = shapes.concat(genshapes);
 
     // add all of the bodies to the world
     World.add(engine.world, shapes);
@@ -112,57 +143,61 @@ function gen() {
         var pairs = event.pairs;
         var bodyA = pairs[0].bodyA;
         var bodyB = pairs[0].bodyB;
-        var once = true;
 
-        // if one is floor and the other is fruit, level is beatable
         // level is considered not beatable if fruit does not move
-        if((bodyA === fruit0 || bodyB === fruit0) && (bodyA === ground || bodyB === ground))
-        {
-            var a = fruit0.position.x != 400;
-            var b = shapes;
-
-            if(a && once){
-                //console.log(b);
-                once = false;
-                beatable++;
-                winable = true;
+        if((bodyA === fruit[0] || bodyB === fruit[0]) && (bodyA === ground || bodyB === ground)){
+            if(fruit[0].position.x == 400) {
+                clearTimeout(time);
+                kill(render, engine);
             }
         }
     });
+
+    Events.on(engine, 'collisionActive', function(event) {
+        var pairs = event.pairs;
+        var bodyA = pairs[0].bodyA;
+        var bodyB = pairs[0].bodyB;
+
+        for(var i = 0; i < fruit.length; i++) {
+            if((bodyA === fruit[i] || bodyB === fruit[i]) && (bodyA === ground || bodyB === ground)){
+                xposs[i] = fruit[i].position.x;
+                fruit[i].position.y = 1000;
+                hits++;
+                win = hits >= fruit.length;
+
+                if(win)
+                {
+                    console.log("Score: " + score()); 
+                    clearTimeout(time);
+                    kill(render, engine);
+                }
+            }
+        }
+    });
+
 
     // Scoring algorithm
     // Finds distance from error fruit to real fruit, and adds it together
     function score()
     {
         // returns -1 if not beatable
-        if(!winable){
+        if(!win){
             return -1;
         }
         else{
-
+            beatable++;
             // to check to see if they are at roughly the same elevation
-            var y0 = Math.round(fruit0.position.y);
-            var y1 = Math.round(fruit1.position.y);
-            var y2 = Math.round(fruit2.position.y);
-            var y3 = Math.round(fruit3.position.y);
-            var y4 = Math.round(fruit4.position.y);
-
-            var xs = [fruit0.position.x];
-
-            if(y0 == y1){
-                xs[xs.length] = fruit1.position.x;
-            }
-            if(y0 == y2){
-                xs[xs.length] = fruit2.position.x;
-            }
-            if(y0 == y3){
-                xs[xs.length] = fruit3.position.x;
-            }
-            if(y0 == y4){
-                xs[xs.length] = fruit4.position.x;
-            }
         }
-        return variance(xs);
+        var vari = variance(xposs)
+            encode = {
+                info : encodedShapes,
+                score : vari
+            };
+        console.log(encode);
+        console.log(JSON.stringify(encode));
+        console.log();
+        console.log(decode(JSON.stringify(encode)));
+        return vari;
     }
 }
 
@@ -186,17 +221,48 @@ function kill(render, engine) {
 
 function variance(nums) {
     console.log("Nums: " + nums);
-    var mean = 0;
+    var mean = 0,
+        numerator = 0;
     for (var i = 0; i < nums.length; i++) {
         mean += nums[i];
     }
     mean /= nums.length;
 
-    var numerator = 0;
     for (var i = 0; i < nums.length; i++) {
         numerator += Math.pow(nums[i] - mean, 2);
     }
     return numerator/(nums.length - 1);
+}
+
+function decode(shapesText){
+    var parse = JSON.parse(shapesText).info;
+        shapes = [];
+
+    for(var i = 0; i < parse.length; i++) {
+        var shape;
+
+        switch(parse[i].shapeType){
+            case 0:
+                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.length, parse[i].properties.length, {isStatic: true});
+                break;
+            case 1:
+                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, {isStatic: true});
+                break;
+            case 2:
+                shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, {isStatic: true});
+                break;
+            case 3:
+            case 4:
+                shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, {isStatic: true});
+        }
+
+        shape.collisionFilter.mask = -1;
+        Body.rotate(shape, parse[i].rotation);
+
+        shapes[i] = shape;
+    }
+
+    return shapes;
 }
 
 gen();
