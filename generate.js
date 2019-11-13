@@ -264,7 +264,9 @@ function decode(shapesText){
             return -1;
         }
         beatable++;
-        saveGameplayData(vari, encodedShapes);
+        var vari = variance(xposs);
+        
+        //saveGameplayData(vari, JSON.stringify(encodedShapes));
         return vari;
     }
 
