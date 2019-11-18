@@ -40,9 +40,12 @@ var butWidth = 100 & SIZE_FACTOR;
 var butHeight = 50 & SIZE_FACTOR;
 var button = Bodies.rectangle(700, 100, butWidth, butHeight, {isStatic: true});
 
+var border0 = Bodies.rectangle(0, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true}),
+    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
+
 
 // add all of the bodies to the world
-World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button, obst0, obst1]);
+World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button, border0, border1]);
 
 // run the engine
 Engine.run(engine);

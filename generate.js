@@ -2,8 +2,8 @@ var canv = canvas;
 var beatable = 0;
 var total = 0;
 
-var SCREEN_WIDTH = 300;
-var SCREEN_HEIGHT = 600;
+var SCREEN_WIDTH = 800;
+var SCREEN_HEIGHT = 800;
 var SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
 
 // all variables from gen are global to allow for data replacement
@@ -51,7 +51,7 @@ function gen() {
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
     border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
 
-    ground = Bodies.rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT, SCREEN_WIDTH + 200, 400 * SIZE_FACTOR, {isStatic: true});
+    ground = Bodies.rectangle(SCREEN_WIDTH/2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, {isStatic: true});
     ground.collisionFilter.mask = -1;
 
     hits = 0;
@@ -59,11 +59,11 @@ function gen() {
     xposs = [];
 
     fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH/2, 50, 5 * SIZE_FACTOR);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH/2, 50, 5 * SIZE_FACTOR);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH/2, 51, 5 * SIZE_FACTOR);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH/2, 50, 5 * SIZE_FACTOR);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH/2, 49, 5 * SIZE_FACTOR);
+    fruit[0] = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR);
+    fruit[1] = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR);
+    fruit[2] = Bodies.circle(SCREEN_WIDTH/2, 51, 7.5 * SIZE_FACTOR);
+    fruit[3] = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR);
+    fruit[4] = Bodies.circle(SCREEN_WIDTH/2, 49, 7.5 * SIZE_FACTOR);
 
     for(var i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
@@ -79,8 +79,8 @@ function gen() {
     for(var i = 0; i < rand; i++) {
         var randshape = Math.floor(Math.random() * 5);
 
-        var randX = Math.random() * (SCREEN_WIDTH - 200) + 100,
-            randY = Math.random() * (SCREEN_HEIGHT - 450) + 200;
+        var randX = Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR,
+            randY = Math.random() * (SCREEN_HEIGHT - 550 * SIZE_FACTOR) + 250 * SIZE_FACTOR;
         
         var shape;
             prop = {};
