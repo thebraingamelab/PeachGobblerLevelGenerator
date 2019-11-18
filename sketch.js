@@ -1,6 +1,10 @@
 // "global" variables
 var canMove = true;
 
+var SCREEN_WIDTH = 375;
+var SCREEN_HEIGHT = 667;
+var SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
+
 // module aliases
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -23,22 +27,17 @@ var render = Render.create({
 });
 
 // creates all necessary game objects
-var obst0 = Bodies.rectangle(400, 200, 80, 80, {isStatic: true });
-Body.rotate(obst0, Math.PI/4);
 
-var obst1 = Bodies.rectangle(325, 400, 20, 160, {isStatic: true });
-Body.rotate(obst1, 7 * (Math.PI/4));
-
-var base = Bodies.rectangle(400, 690, 100, 160, {isStatic: true});
-var mouth = Bodies.rectangle(400, 615, 60, 20, {isStatic: true});
-var teethA = Bodies.polygon(370, 600, 3, 20, {isStatic: true})
+var base = Bodies.rectangle(400, 690, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, {isStatic: true});
+var mouth = Bodies.rectangle(400, 615, 60 * SIZE_FACTOR, 20 * SIZE_FACTOR, {isStatic: true});
+var teethA = Bodies.polygon(370, 600, 3, 20 * SIZE_FACTOR, {isStatic: true})
 Body.rotate(teethA, 7 * (Math.PI/6));
-var teethB = Bodies.polygon(430, 600, 3, 20, {isStatic: true})
+var teethB = Bodies.polygon(430, 600, 3, 20 * SIZE_FACTOR, {isStatic: true})
 Body.rotate(teethB, 7 * (Math.PI/6));
-var fruit = Bodies.circle(400, 50, 5, {isStatic: true});
-var ground = Bodies.rectangle(500, 800, 1010, 60, {isStatic: true});
-var butWidth = 100;
-var butHeight = 50;
+var fruit = Bodies.circle(400, 50, 5 * SIZE_FACTOR, {isStatic: true});
+var ground = Bodies.rectangle(500, 800, SCREEN_WIDTH + 200, 400 * SIZE_FACTOR, {isStatic: true});
+var butWidth = 100 & SIZE_FACTOR;
+var butHeight = 50 & SIZE_FACTOR;
 var button = Bodies.rectangle(700, 100, butWidth, butHeight, {isStatic: true});
 
 
