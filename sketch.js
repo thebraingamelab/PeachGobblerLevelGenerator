@@ -28,24 +28,24 @@ var render = Render.create({
 
 // creates all necessary game objects
 
-var base = Bodies.rectangle(400, 690, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, {isStatic: true});
-var mouth = Bodies.rectangle(400, 615, 60 * SIZE_FACTOR, 20 * SIZE_FACTOR, {isStatic: true});
-var teethA = Bodies.polygon(370, 600, 3, 20 * SIZE_FACTOR, {isStatic: true})
+var base = Bodies.rectangle(400, 690, 100,  160, {isStatic: true});
+var mouth = Bodies.rectangle(400, 615, 60 , 20 , {isStatic: true});
+var teethA = Bodies.polygon(370, 600, 3, 20 , {isStatic: true})
 Body.rotate(teethA, 7 * (Math.PI/6));
-var teethB = Bodies.polygon(430, 600, 3, 20 * SIZE_FACTOR, {isStatic: true})
+var teethB = Bodies.polygon(430, 600, 3, 20 , {isStatic: true})
 Body.rotate(teethB, 7 * (Math.PI/6));
-var fruit = Bodies.circle(400, 50, 5 * SIZE_FACTOR, {isStatic: true});
-var ground = Bodies.rectangle(500, 800, SCREEN_WIDTH + 200, 400 * SIZE_FACTOR, {isStatic: true});
-var butWidth = 100 & SIZE_FACTOR;
-var butHeight = 50 & SIZE_FACTOR;
+var fruit = Bodies.circle(400, 50, 10 , {isStatic: true});
+var ground = Bodies.rectangle(400, 800, 1000, 60 , {isStatic: true});
+var butWidth = 100;
+var butHeight = 50;
 var button = Bodies.rectangle(700, 100, butWidth, butHeight, {isStatic: true});
 
-var border0 = Bodies.rectangle(0, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true}),
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
+/*var border0 = Bodies.rectangle(0, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true}),
+    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});*/
 
 
 // add all of the bodies to the world
-World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button, border0, border1]);
+World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button/*, border0, border1*/]);
 
 // run the engine
 Engine.run(engine);

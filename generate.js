@@ -2,9 +2,10 @@ var canv = canvas;
 var beatable = 0;
 var total = 0;
 
-var SCREEN_WIDTH = 800;
-var SCREEN_HEIGHT = 800;
-var SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
+var SCREEN_WIDTH = 360;
+var SCREEN_HEIGHT = 640;
+var SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
+var max = 0;
 
 // all variables from gen are global to allow for data replacement
 var engine,
@@ -44,6 +45,8 @@ function gen() {
         engine: engine
     });
 
+    engine.world.gravity.y = SIZE_FACTOR;
+
     time = setTimeout( function(){kill(render, engine);} , 5000);
 
     shapes = [];
@@ -67,7 +70,8 @@ function gen() {
 
     for(var i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
-    }
+        //fruit[i].frictionAir = 0.0001;
+   }
 
     shapes = [ground, border0, border1].concat(fruit);
 
@@ -79,8 +83,8 @@ function gen() {
     for(var i = 0; i < rand; i++) {
         var randshape = Math.floor(Math.random() * 5);
 
-        var randX = Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR,
-            randY = Math.random() * (SCREEN_HEIGHT - 550 * SIZE_FACTOR) + 250 * SIZE_FACTOR;
+        var randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR),
+            randY = (Math.random() * (SCREEN_HEIGHT - 550 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
         
         var shape;
             prop = {};
@@ -91,7 +95,7 @@ function gen() {
             // default should never trigger. added here for contingency
             default:
             case 0:
-                var side = Math.random() * 200 * SIZE_FACTOR + 1;
+                var side = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
                     length : side
                 };
@@ -100,8 +104,8 @@ function gen() {
 
             // 1 for rectangle
             case 1:
-                var width = Math.random() * 180 * SIZE_FACTOR + 20,
-                    height = Math.random() * 180 * SIZE_FACTOR + 20;
+                var width = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2),
+                    height = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
                     width : width,
                     height : height
@@ -111,7 +115,7 @@ function gen() {
 
             // 2 for circle
             case 2:
-                var radius = Math.random() * 100 * SIZE_FACTOR + 1;
+                var radius = (Math.random() * 98 + 2) * SIZE_FACTOR;
                 prop = {
                     radius : radius
                 };
@@ -122,8 +126,8 @@ function gen() {
             case 3:
             case 4:
                 var slope = randshape - 2,
-                    width = Math.random() * 180 * SIZE_FACTOR + 20,
-                    height = Math.random() * 180 * SIZE_FACTOR + 20;
+                    width = (Math.random() * 195  + 5) * SIZE_FACTOR / Math.sqrt(2),
+                    height = (Math.random() * 195  + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
                     slope : slope,
                     width : width,
@@ -133,6 +137,7 @@ function gen() {
                 break;
         }
         shape.collisionFilter.mask = -1;
+        shape.friction = 0.025;
 
         rot = Math.random() * 2 * Math.PI;
 
@@ -168,7 +173,7 @@ function gen() {
         var bodyB = pairs[0].bodyB;
 
         // level is considered not beatable if fruit does not move
-        if((bodyA === fruit[0] || bodyB === fruit[0]) && (bodyA === ground || bodyB === ground)){
+        if(bodyA === ground || bodyB === ground){
             if(fruit[0].position.x == SCREEN_WIDTH/2) {
                 clearTimeout(time);
                 kill(render, engine);
@@ -182,7 +187,7 @@ function gen() {
         var bodyB = pairs[0].bodyB;
 
         for(var i = 0; i < fruit.length; i++) {
-            if((bodyA === fruit[i] || bodyB === fruit[i]) && (bodyA === ground || bodyB === ground)){
+            if((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
                 xposs[i] = fruit[i].position.x;
                 fruit[i].position.y = SCREEN_HEIGHT + 1000;
                 hits++;
@@ -193,6 +198,12 @@ function gen() {
                     clearTimeout(time);
                     kill(render, engine);
                 }
+            }
+
+            if(bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
+                win = false;
+                clearTimeout(time);
+                kill(render, engine);
             }
         }
     });
@@ -275,7 +286,9 @@ function decode(shapesText){
         beatable++;
         var vari = variance(xposs);
         
-        //saveGameplayData(vari, JSON.stringify(encodedShapes));
+        saveGameplayData(vari, JSON.stringify(encodedShapes));
+        max = Math.max(vari, max);
+        console.log("Max: " + max);
         return vari;
     }
 
