@@ -244,37 +244,6 @@ function variance(nums) {
     return numerator/(nums.length - 1);
 }
 
-function decode(shapesText){
-    var parse = JSON.parse(shapesText).info;
-        shapes = [];
-
-    for(var i = 0; i < parse.length; i++) {
-        var shape;
-
-        switch(parse[i].shapeType){
-            case 0:
-                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.length, parse[i].properties.length, {isStatic: true});
-                break;
-            case 1:
-                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, {isStatic: true});
-                break;
-            case 2:
-                shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, {isStatic: true});
-                break;
-            case 3:
-            case 4:
-                shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, {isStatic: true});
-        }
-
-        shape.collisionFilter.mask = -1;
-        Body.rotate(shape, parse[i].rotation);
-
-        shapes[i] = shape;
-    }
-
-    return shapes;
-}
-
     // Scoring algorithm
     // Finds distance from error fruit to real fruit, and adds it together
     function score()
