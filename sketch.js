@@ -35,18 +35,16 @@ Body.rotate(teethA, 7 * (Math.PI/6));
 var teethB = Bodies.polygon(SCREEN_WIDTH/2 + 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, {isStatic: true})
 Body.rotate(teethB, 7 * (Math.PI/6));
 var fruit = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR, {isStatic: true});
+fruit.collisionFilter.group = -1;
 var ground = Bodies.rectangle(SCREEN_WIDTH/2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 110 * SIZE_FACTOR, {isStatic: true});
 ground.collisionFilter.mask = -1;
-var butWidth = 100 * SIZE_FACTOR;
-var butHeight = 50 * SIZE_FACTOR;
-var button = Bodies.rectangle(SCREEN_WIDTH - butWidth *2, butHeight * 2, butWidth, butHeight, {isStatic: true});
-
-var border0 = Bodies.rectangle(0, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true}),
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
+var butWidth = 150 * SIZE_FACTOR;
+var butHeight = 100 * SIZE_FACTOR;
+var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, butWidth, butHeight, {isStatic: true});
 
 
 // add all of the bodies to the world
-World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button, border0, border1]);
+World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button]);
 
 // run the engine
 Engine.run(engine);
@@ -102,26 +100,28 @@ Events.on(engine, 'collisionStart', function(event) {
     }
 });
 
-function decode(shapesText){
-    var parse = JSON.parse(shapesText).info;
-        shapes = [];
+// takes in a level json, returns the level as an array of Matte.js Bodies
+function decode(shapesText) {
+    var parse = JSON.parse(shapesText);
+    console.log(parse);
+    shapes = [];
 
-    for(var i = 0; i < parse.length; i++) {
+    for (var i = 0; i < parse.length; i++) {
         var shape;
 
-        switch(parse[i].shapeType){
+        switch (parse[i].shapeType) {
             case 0:
-                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.length, parse[i].properties.length, {isStatic: true});
+                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.length, parse[i].properties.length, { isStatic: true });
                 break;
             case 1:
-                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, {isStatic: true});
+                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, { isStatic: true });
                 break;
             case 2:
-                shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, {isStatic: true});
+                shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, { isStatic: true });
                 break;
             case 3:
             case 4:
-                shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, {isStatic: true});
+                shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, { isStatic: true });
         }
 
         shape.collisionFilter.mask = -1;

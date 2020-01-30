@@ -41,20 +41,22 @@ function gen() {
         canvas: canv,
         options: {
             width: SCREEN_WIDTH,
-            height: SCREEN_HEIGHT},
+            height: SCREEN_HEIGHT
+        },
         engine: engine
     });
 
     engine.world.gravity.y = SIZE_FACTOR;
 
-    time = setTimeout( function(){kill(render, engine);} , 5000);
+    // create all game objects
+    time = setTimeout(function () { kill(render, engine); }, 5000);
 
     shapes = [];
 
-    border0 = Bodies.rectangle(0, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT/2, 2, SCREEN_HEIGHT, {isStatic: true});
+    border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
+    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
 
-    ground = Bodies.rectangle(SCREEN_WIDTH/2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, {isStatic: true});
+    ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
     ground.collisionFilter.mask = -1;
 
     hits = 0;
@@ -62,34 +64,35 @@ function gen() {
     xposs = [];
 
     fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH/2, 51, 7.5 * SIZE_FACTOR);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH/2, 50, 7.5 * SIZE_FACTOR);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH/2, 49, 7.5 * SIZE_FACTOR);
+    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR);
+    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR);
+    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 51, 7.5 * SIZE_FACTOR);
+    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR);
+    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 49, 7.5 * SIZE_FACTOR);
 
-    for(var i = 0; i < fruit.length; i++) {
+    for (var i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
         //fruit[i].frictionAir = 0.0001;
-   }
+    }
 
     shapes = [ground, border0, border1].concat(fruit);
 
+    // generates random shapes
     rand = Math.ceil(Math.random() * 7) + 3;
 
     genshapes = [];
     encodedShapes = [];
 
-    for(var i = 0; i < rand; i++) {
+    for (var i = 0; i < rand; i++) {
         var randshape = Math.floor(Math.random() * 5);
 
         var randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR),
             randY = (Math.random() * (SCREEN_HEIGHT - 550 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
-        
-        var shape;
-            prop = {};
 
-        switch(randshape){
+        var shape;
+        prop = {};
+
+        switch (randshape) {
 
             // 0 for square
             // default should never trigger. added here for contingency
@@ -97,9 +100,9 @@ function gen() {
             case 0:
                 var side = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
-                    length : side
+                    length: side
                 };
-                shape = Bodies.rectangle(randX, randY, side, side, {isStatic: true});
+                shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
                 break;
 
             // 1 for rectangle
@@ -107,33 +110,33 @@ function gen() {
                 var width = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2),
                     height = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
-                    width : width,
-                    height : height
+                    width: width,
+                    height: height
                 };
-                shape = Bodies.rectangle(randX, randY, width, height, {isStatic: true});
+                shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
                 break;
 
             // 2 for circle
             case 2:
                 var radius = (Math.random() * 98 + 2) * SIZE_FACTOR;
                 prop = {
-                    radius : radius
+                    radius: radius
                 };
-                shape = Bodies.circle(randX, randY, radius, {isStatic: true});
+                shape = Bodies.circle(randX, randY, radius, { isStatic: true });
                 break;
 
             // 3 and 4 for isoceles or right triangle
             case 3:
             case 4:
                 var slope = randshape - 2,
-                    width = (Math.random() * 195  + 5) * SIZE_FACTOR / Math.sqrt(2),
-                    height = (Math.random() * 195  + 5) * SIZE_FACTOR / Math.sqrt(2);
+                    width = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2),
+                    height = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
-                    slope : slope,
-                    width : width,
-                    height : height
+                    slope: slope,
+                    width: width,
+                    height: height
                 }
-                shape = Bodies.trapezoid(randX, randY, width, height, slope, {isStatic: true});
+                shape = Bodies.trapezoid(randX, randY, width, height, slope, { isStatic: true });
                 break;
         }
         shape.collisionFilter.mask = -1;
@@ -145,11 +148,11 @@ function gen() {
         genshapes[i] = shape;
 
         encodeShape = {
-            xpos : randX,
-            ypos : randY,
-            shapeType : randshape,
-            rotation : rot,
-            properties : prop
+            xpos: randX,
+            ypos: randY,
+            shapeType: randshape,
+            rotation: rot,
+            properties: prop
         };
         encodedShapes[i] = encodeShape;
     }
@@ -167,40 +170,41 @@ function gen() {
 
     //console.log(shapes);
 
-    Events.on(engine, 'collisionStart', function(event) {
+    // deals with invalid levels
+    Events.on(engine, 'collisionStart', function (event) {
         var pairs = event.pairs;
         var bodyA = pairs[0].bodyA;
         var bodyB = pairs[0].bodyB;
 
         // level is considered not beatable if fruit does not move
-        if(bodyA === ground || bodyB === ground){
-            if(fruit[0].position.x == SCREEN_WIDTH/2) {
+        if (bodyA === ground || bodyB === ground) {
+            if (fruit[0].position.x == SCREEN_WIDTH / 2) {
                 clearTimeout(time);
                 kill(render, engine);
             }
         }
     });
 
-    Events.on(engine, 'collisionActive', function(event) {
+    // deals with detecting collisions on walls or multiple on floor
+    Events.on(engine, 'collisionActive', function (event) {
         var pairs = event.pairs;
         var bodyA = pairs[0].bodyA;
         var bodyB = pairs[0].bodyB;
 
-        for(var i = 0; i < fruit.length; i++) {
-            if((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
+        for (var i = 0; i < fruit.length; i++) {
+            if ((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
                 xposs[i] = fruit[i].position.x;
                 fruit[i].position.y = SCREEN_HEIGHT + 1000;
                 hits++;
                 win = hits >= fruit.length;
 
-                if(win)
-                {
+                if (win) {
                     clearTimeout(time);
                     kill(render, engine);
                 }
             }
 
-            if(bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
+            if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
                 win = false;
                 clearTimeout(time);
                 kill(render, engine);
@@ -225,12 +229,12 @@ function kill(render, engine) {
 
     total++;
 
-    console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable/total + "%)");
+    console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable / total + "%)");
     gen();
 }
 
+// calculates variance
 function variance(nums) {
-    console.log("Nums: " + nums);
     var mean = 0,
         numerator = 0;
     for (var i = 0; i < nums.length; i++) {
@@ -241,52 +245,89 @@ function variance(nums) {
     for (var i = 0; i < nums.length; i++) {
         numerator += Math.pow(nums[i] - mean, 2);
     }
-    return numerator/(nums.length - 1);
+    return numerator / (nums.length - 1);
 }
 
-    // Scoring algorithm
-    // Finds distance from error fruit to real fruit, and adds it together
-    function score()
-    {
-        // returns -1 if not beatable
-        if(!win){
-            return -1;
+// Scoring algorithm
+// Uses variance to calculate scoring
+function score() {
+    // returns -1 if not beatable
+    if (!win) {
+        return -1;
+    }
+    beatable++;
+    var vari = variance(xposs);
+
+    //saveGameplayData(vari, JSON.stringify(encodedShapes));
+    console.log(genshapes);
+    console.log(decode(JSON.stringify(encodedShapes)));
+    max = Math.max(vari, max);
+    console.log("Max: " + max);
+    return vari;
+}
+
+function decode(shapesText) {
+    var parse = JSON.parse(shapesText);
+    console.log(parse);
+    shapes = [];
+
+    for (var i = 0; i < parse.length; i++) {
+        var shape;
+
+        switch (parse[i].shapeType) {
+            case 0:
+                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.length, parse[i].properties.length, { isStatic: true });
+                break;
+            case 1:
+                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, { isStatic: true });
+                break;
+            case 2:
+                shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, { isStatic: true });
+                break;
+            case 3:
+            case 4:
+                shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, { isStatic: true });
         }
-        beatable++;
-        var vari = variance(xposs);
-        
-        saveGameplayData(vari, JSON.stringify(encodedShapes));
-        max = Math.max(vari, max);
-        console.log("Max: " + max);
-        return vari;
+
+        shape.collisionFilter.mask = -1;
+        shape.friction = 0.025;
+        Body.rotate(shape, parse[i].rotation);
+
+        shapes[i] = shape;
     }
 
-    function saveGameplayData(score, geo){
-  
-        var payload = {
-          LevelID: randomID(8),
-          Score : score,
-          Geometry : geo
-        };
-      
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.thebraingamelab.org/peachgobblerlevelsave');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-          if(xhr.status == 200){
-          }
-        };
-        xhr.send(JSON.stringify(payload));     
-      }
+    return shapes;
+}
 
-      function randomID(length){
-        var result = '';
-        length = (typeof length == 'undefined') ? 32 : length;
-        var chars = '0123456789abcdefghjklmnopqrstuvwxyz';
-        for(var i = 0; i<length; i++){
-          result += chars[Math.floor(Math.random() * chars.length)];
+
+// Uploads data to dynamo db
+function saveGameplayData(score, geo) {
+
+    var payload = {
+        LevelID: randomID(8),
+        Score: score,
+        Geometry: geo
+    };
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.thebraingamelab.org/peachgobblerlevelsave');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+        if (xhr.status == 200) {
         }
-        return result;
+    };
+    xhr.send(JSON.stringify(payload));
+}
+
+function randomID(length) {
+    var result = '';
+    length = (typeof length == 'undefined') ? 32 : length;
+    var chars = '0123456789abcdefghjklmnopqrstuvwxyz';
+    for (var i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
     }
+    return result;
+
+}
 
 gen();
