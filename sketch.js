@@ -56,6 +56,12 @@ Render.run(render);
 function move(event){
     if(canMove){
         var mousex = event.touches[0].clientX;
+        if(mousex > SCREEN_WIDTH) {
+            mousex = SCREEN_WIDTH;
+        }
+        if(mousex < 0) {
+            mousex = 0;
+        }
 
         Body.translate(mouth, {x: mousex - mouth.position.x, y: 0});
         Body.translate(teethA, {x: mousex - teethA.position.x - 30 * SIZE_FACTOR, y: 0});
