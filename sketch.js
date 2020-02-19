@@ -1,4 +1,4 @@
-// "global" variables
+// the "global" variables
 var canMove = true;
 
 var SCREEN_WIDTH = 360;
