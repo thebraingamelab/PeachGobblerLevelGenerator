@@ -19,7 +19,7 @@ var engine = Engine.create();
 engine.world.gravity.y = SIZE_FACTOR;
 
 // create a level
-var dynamodb = new AWS.DynamoDB({ region: "us-east-2", credentials: new AWS.Credentials('AKIASDVJ646YJNY5H2WA', 'QKZvfFtIVuDMxxk/REQrvbLk6K5U2iWjzHghbf3l') });
+var dynamodb = new AWS.DynamoDB({ region: "us-east-2", credentials: new AWS.Credentials() });
 
 getLevel(1000);
 
