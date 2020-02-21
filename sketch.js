@@ -19,9 +19,8 @@ var engine = Engine.create();
 engine.world.gravity.y = SIZE_FACTOR;
 
 // create a level
-var dynamodb = new AWS.DynamoDB({ region: "us-east-2", credentials: new AWS.Credentials() });
-
-getLevel(1000);
+/*var dynamodb = new AWS.DynamoDB({ region: "us-east-2", credentials: new AWS.Credentials() });
+getLevel(1000);*/
 
 // creates all necessary game objects
 
@@ -149,7 +148,7 @@ function decode(shapesText) {
     return shapes;
 }
 
-function getLevel(threshold) {
+/*function getLevel(threshold) {
 
     var items;
     var count;
@@ -175,4 +174,4 @@ function getLevel(threshold) {
         levelString = scores[Math.floor(Math.random() * count)];
         render();
     });
-}
+}*/
