@@ -5,6 +5,8 @@ var total = 0;
 var SCREEN_WIDTH = 360;
 var SCREEN_HEIGHT = 640;
 var SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
+var BALL_SIZE = SCREEN_WIDTH/20;
+
 var max = 0;
 
 // all variables from gen are global to allow for data replacement
@@ -64,11 +66,11 @@ function gen() {
     xposs = [];
 
     fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 51, 7.5 * SIZE_FACTOR);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 49, 7.5 * SIZE_FACTOR);
+    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_SIZE);
+    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_SIZE);
+    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 51, BALL_SIZE);
+    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_SIZE);
+    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 49, BALL_SIZE);
 
     for (var i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
