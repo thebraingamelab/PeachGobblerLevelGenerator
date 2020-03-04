@@ -23,7 +23,6 @@ engine.world.gravity.y = SIZE_FACTOR;
 getLevel(1000);*/
 
 // creates all necessary game objects
-
 var base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
 var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 165 * SIZE_FACTOR, 60 * SIZE_FACTOR, 60 * SIZE_FACTOR, { isStatic: true });
 var teethA = Bodies.polygon(SCREEN_WIDTH / 2 - 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
