@@ -99,6 +99,7 @@ function gen() {
             // 0 for square
             // default should never trigger. added here for contingency
             default:
+                break;
             case 0:
                 var side = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
@@ -170,8 +171,6 @@ function gen() {
     // run the renderer
     Render.run(render);
 
-    //console.log(shapes);
-
     // deals with invalid levels
     Events.on(engine, 'collisionStart', function (event) {
         var pairs = event.pairs;
@@ -220,11 +219,11 @@ function gen() {
 function kill(render, engine) {
     console.log("Score: " + score());
 
-    Matter.Render.stop(render); // this only stop renderer but not destroy canvas
+    Matter.Render.stop(render); // this only stops renderer but does not destroy canvas
     Matter.World.clear(engine.world);
     Matter.Engine.clear(engine);
 
-    render.canvas.remove();
+    render.canvas.remove(); // this removes canvas
     render.canvas = null;
     render.context = null;
     render.textures = {};
