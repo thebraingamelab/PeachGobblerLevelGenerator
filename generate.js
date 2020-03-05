@@ -90,7 +90,7 @@ function gen() {
         var randshape = Math.floor(Math.random() * 5);
 
         var randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR),
-            randY = (Math.random() * (SCREEN_HEIGHT - 550 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
+            randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
 
         var shape;
         prop = {};
@@ -102,7 +102,7 @@ function gen() {
             default:
                 break;
             case 0:
-                var side = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
+                var side = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     length: side
                 };
@@ -111,8 +111,8 @@ function gen() {
 
             // 1 for rectangle
             case 1:
-                var width = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2),
-                    height = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
+                var width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
+                    height = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     width: width,
                     height: height
@@ -122,7 +122,7 @@ function gen() {
 
             // 2 for circle
             case 2:
-                var radius = (Math.random() * 98 + 2) * SIZE_FACTOR / Math.sqrt(2);
+                var radius = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     radius: radius
                 };
@@ -133,8 +133,8 @@ function gen() {
             case 3:
             case 4:
                 var slope = randshape - 2,
-                    width = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2),
-                    height = (Math.random() * 195 + 5) * SIZE_FACTOR / Math.sqrt(2);
+                    width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
+                    height = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     slope: slope,
                     width: width,
