@@ -50,9 +50,10 @@ function gen() {
 
     engine.world.gravity.y = SIZE_FACTOR;
 
-    // create all game objects
+    // sets timer for 5 seconds that kills the level after 5 seconds of inactivity
     time = setTimeout(function () { kill(render, engine); }, 5000);
 
+    // create all game objects
     shapes = [];
 
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
