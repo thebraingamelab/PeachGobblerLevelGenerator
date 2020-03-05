@@ -5,7 +5,7 @@ var total = 0;
 var SCREEN_WIDTH = 360;
 var SCREEN_HEIGHT = 640;
 var SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
-var BALL_SIZE = SCREEN_WIDTH/20;
+var BALL_RADIUS = SCREEN_WIDTH/20;
 
 var max = 0;
 
@@ -66,11 +66,11 @@ function gen() {
     xposs = [];
 
     fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_SIZE);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_SIZE);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 51, BALL_SIZE);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_SIZE);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 49, BALL_SIZE);
+    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS);
+    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2 + BALL_RADIUS / 5, 50, BALL_RADIUS);
+    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 50 + BALL_RADIUS / 5, BALL_RADIUS);
+    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 50, BALL_RADIUS);
+    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 50 - BALL_RADIUS / 5, BALL_RADIUS);
 
     for (var i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
@@ -80,7 +80,7 @@ function gen() {
     shapes = [ground, border0, border1].concat(fruit);
 
     // generates random shapes
-    rand = Math.ceil(Math.random() * 7) + 3;
+    rand = Math.ceil(Math.random() * 9) + 1;
 
     genshapes = [];
     encodedShapes = [];
@@ -121,7 +121,7 @@ function gen() {
 
             // 2 for circle
             case 2:
-                var radius = (Math.random() * 98 + 2) * SIZE_FACTOR;
+                var radius = (Math.random() * 98 + 2) * SIZE_FACTOR / Math.sqrt(2);
                 prop = {
                     radius: radius
                 };
