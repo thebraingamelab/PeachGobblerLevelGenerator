@@ -18,10 +18,6 @@ var engine = Engine.create();
 
 engine.world.gravity.y = SIZE_FACTOR;
 
-// create a level
-/*var dynamodb = new AWS.DynamoDB({ region: "us-east-2", credentials: new AWS.Credentials() });
-getLevel(1000);*/
-
 // creates all necessary game objects
 var base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
 var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 165 * SIZE_FACTOR, 60 * SIZE_FACTOR, 60 * SIZE_FACTOR, { isStatic: true });
