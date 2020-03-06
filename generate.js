@@ -262,7 +262,7 @@ function score() {
 
     //saveGameplayData(vari, JSON.stringify(encodedShapes));
     console.log(genshapes);
-    console.log(decode(JSON.stringify(encodedShapes)));
+    decode(JSON.stringify(encodedShapes));
     max = Math.max(vari, max);
     console.log("Max: " + max);
     return vari;
