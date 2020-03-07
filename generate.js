@@ -81,7 +81,7 @@ function gen() {
     shapes = [ground, border0, border1].concat(fruit);
 
     // generates random shapes
-    rand = Math.ceil(Math.random() * 9) + 1;
+    rand = Math.ceil(Math.random() * 4) + 1;
 
     genshapes = [];
     encodedShapes = [];
