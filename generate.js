@@ -50,7 +50,7 @@ function gen() {
 
     engine.world.gravity.y = SIZE_FACTOR;
 
-    // sets timer for 5 seconds that kills the level after 5 seconds of inactivity
+    // sets timer for 5 seconds that kills the level and generates a new one after 5 seconds of inactivity
     time = setTimeout(function () { kill(render, engine); }, 5000);
 
     // create all game objects
