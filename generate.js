@@ -50,8 +50,8 @@ function gen() {
 
     engine.world.gravity.y = SIZE_FACTOR;
 
-    // sets timer for 5 seconds that kills the level and generates a new one after 5 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine); }, 5000);
+    // sets timer for 5 seconds that kills the level and generates a new one after 8 seconds of inactivity
+    time = setTimeout(function () { kill(render, engine); }, 8000);
 
     // create all game objects
     shapes = [];
@@ -224,7 +224,7 @@ function kill(render, engine) {
     Matter.World.clear(engine.world);
     Matter.Engine.clear(engine);
 
-    render.canvas.remove(); // this removes canvas
+    render.canvas.remove(); // this removes the canvas
     render.canvas = null;
     render.context = null;
     render.textures = {};
