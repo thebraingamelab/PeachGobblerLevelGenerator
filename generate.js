@@ -75,7 +75,6 @@ function gen() {
 
     for (var i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
-        //fruit[i].frictionAir = 0.0001;
     }
 
     shapes = [ground, border0, border1].concat(fruit);
