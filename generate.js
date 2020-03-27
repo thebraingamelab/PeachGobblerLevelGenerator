@@ -128,7 +128,8 @@ function gen() {
                 shape = Bodies.circle(randX, randY, radius, { isStatic: true });
                 break;
 
-            // 3 and 4 for isoceles or right triangle
+            // 3 for isoceles triangle
+            // 4 for right triangle
             case 3:
             case 4:
                 var slope = randshape - 2,
