@@ -145,7 +145,6 @@ function decode(shapesText) {
 }
 
 /*function getLevel(threshold) {
-
     var items;
     var count;
     var scores = [];
