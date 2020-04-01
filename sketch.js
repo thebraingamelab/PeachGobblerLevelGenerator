@@ -143,30 +143,3 @@ function decode(shapesText) {
 
     return shapes;
 }
-
-/*function getLevel(threshold) {
-    var items;
-    var count;
-    var scores = [];
-
-
-    var params = {
-        ProjectionExpression: "Score, Geometry",
-        TableName: "tbgl_PeachGobblerLevels"
-    };
-
-    dynamodb.scan(params, function (err, data) {
-
-        items = data["Items"];
-        count = data["Count"];
-        for (var i = 0; i < count; i++) {
-            var x = items[i]["Score"]["N"];
-            if (x > threshold) {
-                scores.push(items[i]["Geometry"]["S"]);
-            }
-        }
-        count = scores.length;
-        levelString = scores[Math.floor(Math.random() * count)];
-        render();
-    });
-}*/
