@@ -324,7 +324,7 @@ function saveGameplayData(score, geo) {
 function randomID(length) {
     var result = '';
     length = (typeof length == 'undefined') ? 32 : length;
-    var chars = '0123456789abcdefghjklmnopqrstuvwxyz';
+    var chars = '0123456789abcdefghijklmnopqrstuvwxyz';
     for (var i = 0; i < length; i++) {
         result += chars[Math.floor(Math.random() * chars.length)];
     }
