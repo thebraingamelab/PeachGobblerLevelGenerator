@@ -20,12 +20,12 @@ engine.world.gravity.y = SIZE_FACTOR;
 
 // creates all necessary game objects
 var base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
-var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 165 * SIZE_FACTOR, 60 * SIZE_FACTOR, 60 * SIZE_FACTOR, { isStatic: true });
+var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 165 * SIZE_FACTOR, SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, { isStatic: true });
 var teethA = Bodies.polygon(SCREEN_WIDTH / 2 - 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethA, 7 * (Math.PI / 6));
 var teethB = Bodies.polygon(SCREEN_WIDTH / 2 + 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethB, 7 * (Math.PI / 6));
-var fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, 7.5 * SIZE_FACTOR, { isStatic: true });
+var fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, SCREEN_WIDTH/8, { isStatic: true });
 fruit.collisionFilter.group = -1;
 var ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 110 * SIZE_FACTOR, { isStatic: true });
 ground.collisionFilter.mask = -1;
@@ -47,7 +47,7 @@ function render() {
     });
 
     // add all of the bodies to the world
-    World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button].concat(decode(levelString)));
+    World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button]);
 
     // run the engine
     Engine.run(engine);
@@ -101,6 +101,7 @@ Events.on(engine, 'collisionStart', function (event) {
         // if one is mouth and the other is fruit, win condition
         if (bodyA === mouth || bodyB === mouth) {
             console.log("win");
+            console.log(Math.abs(bodyA.position.x - bodyB.position.x));
         }
         // if one is floor and the other is floor, lose
         if (bodyA === ground || bodyB === ground) {
@@ -143,3 +144,5 @@ function decode(shapesText) {
 
     return shapes;
 }
+
+render();
