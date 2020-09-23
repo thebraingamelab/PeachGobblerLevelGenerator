@@ -260,6 +260,7 @@ function score() {
     beatable++;
     var vari = variance(xposs);
 
+    // uncomment below to allow for levels to be uploaded
     //saveGameplayData(vari, JSON.stringify(encodedShapes));
     console.log(genshapes);
     decode(JSON.stringify(encodedShapes));
