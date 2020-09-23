@@ -16,6 +16,7 @@ var Engine = Matter.Engine,
 // create an engine
 var engine = Engine.create();
 
+// Makes gravity that scales with height
 engine.world.gravity.y = SIZE_FACTOR;
 
 // creates all necessary game objects
@@ -101,6 +102,7 @@ Events.on(engine, 'collisionStart', function (event) {
         // if one is mouth and the other is fruit, win condition
         if (bodyA === mouth || bodyB === mouth) {
             console.log("win");
+            // uses the difference in position of the bodies to calculate accuracy
             console.log(Math.abs(bodyA.position.x - bodyB.position.x));
         }
         // if one is floor and the other is floor, lose
