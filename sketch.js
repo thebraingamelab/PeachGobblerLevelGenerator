@@ -5,6 +5,9 @@ var SCREEN_WIDTH = 360;
 var SCREEN_HEIGHT = 640;
 var SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
 
+var BALL_RADIUS = SCREEN_WIDTH/20;
+var MOUTH_SIZE = SCREEN_WIDTH/5;
+
 // module aliases
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -17,16 +20,17 @@ var Engine = Matter.Engine,
 var engine = Engine.create();
 
 // Makes gravity that scales with height
-engine.world.gravity.y = SIZE_FACTOR;
+// for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed
+engine.world.gravity.y = SIZE_FACTOR * .95;
 
 // creates all necessary game objects
 var base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
-var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 165 * SIZE_FACTOR, SCREEN_WIDTH / 2, SCREEN_WIDTH / 2, { isStatic: true });
+var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 170 * SIZE_FACTOR, MOUTH_SIZE, MOUTH_SIZE/2, { isStatic: true });
 var teethA = Bodies.polygon(SCREEN_WIDTH / 2 - 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethA, 7 * (Math.PI / 6));
 var teethB = Bodies.polygon(SCREEN_WIDTH / 2 + 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethB, 7 * (Math.PI / 6));
-var fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, SCREEN_WIDTH/8, { isStatic: true });
+var fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, { isStatic: true });
 fruit.collisionFilter.group = -1;
 var ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 110 * SIZE_FACTOR, { isStatic: true });
 ground.collisionFilter.mask = -1;
