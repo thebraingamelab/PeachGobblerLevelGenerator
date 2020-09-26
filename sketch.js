@@ -135,7 +135,8 @@ function decode(shapesText) {
             case 2:
                 shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, { isStatic: true });
                 break;
-            // possibly remove/revise these to deal with phasing issue
+            // possibly remove/revise triangles/trapezoids to deal with phasing issue
+            // phasing issues seem to be resolved with bigger fruit and slower gravity
             case 3:
             case 4:
                 shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, { isStatic: true });
