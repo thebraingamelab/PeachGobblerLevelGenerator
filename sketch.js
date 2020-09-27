@@ -16,11 +16,11 @@ var Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
-// create an engine
+// creates an engine
 var engine = Engine.create();
 
 // Makes gravity that scales with height
-// for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed
+// for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
 engine.world.gravity.y = SIZE_FACTOR * .95;
 
 // creates all necessary game objects
