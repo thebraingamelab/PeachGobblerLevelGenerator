@@ -1,6 +1,4 @@
-// the "global" variables
-var canMove = true;
-
+// constants
 var SCREEN_WIDTH = 360;
 var SCREEN_HEIGHT = 640;
 var SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
@@ -38,6 +36,7 @@ var butWidth = 150 * SIZE_FACTOR;
 var butHeight = 100 * SIZE_FACTOR;
 var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, butWidth, butHeight, { isStatic: true });
 
+var canMove = true;
 
 function render() {
     // create a renderer
