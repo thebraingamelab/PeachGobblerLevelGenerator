@@ -38,6 +38,8 @@ var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, b
 
 var canMove = true;
 
+var levelQueue = [];
+
 function render() {
     // create a renderer
     var render = Render.create({
@@ -51,7 +53,9 @@ function render() {
     });
 
     // add all of the bodies to the world
-    World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button]);
+    if(levelQueue.length != 0) {
+        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button].concat(levelQueue.pop()));
+    }
 
     // run the engine
     Engine.run(engine);

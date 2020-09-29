@@ -262,6 +262,7 @@ function score() {
 
     // uncomment below to allow for levels to be uploaded
     //saveGameplayData(vari, JSON.stringify(encodedShapes));
+    console.log("genshapes");
     console.log(genshapes);
     decode(JSON.stringify(encodedShapes));
     max = Math.max(vari, max);
@@ -271,7 +272,8 @@ function score() {
 
 function decode(shapesText) {
     var parse = JSON.parse(shapesText);
-    console.log(parse);
+    console.log("json");
+    console.dir(parse);
     shapes = [];
 
     for (var i = 0; i < parse.length; i++) {
