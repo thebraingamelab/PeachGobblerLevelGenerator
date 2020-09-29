@@ -54,7 +54,7 @@ function render() {
 
     // add all of the bodies to the world
     if(levelQueue.length != 0) {
-        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button].concat(levelQueue.pop()));
+        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button].concat(levelQueue.shift()));
     }
 
     // run the engine
