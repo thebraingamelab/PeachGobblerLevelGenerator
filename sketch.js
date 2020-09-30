@@ -14,12 +14,9 @@ var Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
-// creates an engine
-var engine = Engine.create();
+var engine;
 
-// Makes gravity that scales with height
-// for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
-engine.world.gravity.y = SIZE_FACTOR * .95;
+var render;
 
 // creates all necessary game objects
 var base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
@@ -38,11 +35,18 @@ var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, b
 
 var canMove = true;
 
-var levelQueue = [];
+var levelQueue = [[],[]];
 
-function render() {
+function render_func() {
+    // creates an engine
+    engine = Engine.create()
+
+    // Makes gravity that scales with height
+    // for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
+    engine.world.gravity.y = SIZE_FACTOR * .95;
+
     // create a renderer
-    var render = Render.create({
+    render = Render.create({
         element: document.body,
         canvas: canvas,
         options: {
@@ -62,6 +66,13 @@ function render() {
 
     // run the renderer
     Render.run(render);
+}
+
+function clear() {
+    Engine.clear(engine);
+    Render.clear(render);
+
+    render_func();
 }
 
 // activates on hold and drag
@@ -111,10 +122,12 @@ Events.on(engine, 'collisionStart', function (event) {
             console.log("win");
             // uses the difference in position of the bodies to calculate accuracy
             console.log(Math.abs(bodyA.position.x - bodyB.position.x));
+            clear();
         }
         // if one is floor and the other is floor, lose
         if (bodyA === ground || bodyB === ground) {
             console.log("lose");
+            clear();
         }
     }
 });
@@ -155,4 +168,4 @@ function decode(shapesText) {
     return shapes;
 }
 
-render();
+render_func();
