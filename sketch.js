@@ -14,7 +14,12 @@ var Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
-var engine;
+// creates an engine
+var engine = Engine.create()
+
+// Makes gravity that scales with height
+// for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
+engine.world.gravity.y = SIZE_FACTOR * .95;
 
 var render;
 
@@ -35,16 +40,9 @@ var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, b
 
 var canMove = true;
 
-var levelQueue = [[],[]];
+var levelQueue = ["",""];
 
 function render_func() {
-    // creates an engine
-    engine = Engine.create()
-
-    // Makes gravity that scales with height
-    // for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
-    engine.world.gravity.y = SIZE_FACTOR * .95;
-
     // create a renderer
     render = Render.create({
         element: document.body,
@@ -58,7 +56,7 @@ function render_func() {
 
     // add all of the bodies to the world
     if(levelQueue.length != 0) {
-        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button].concat(levelQueue.shift()));
+        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button]/*.concat(decode(levelQueue.shift()))*/);
     }
 
     // run the engine
@@ -69,8 +67,9 @@ function render_func() {
 }
 
 function clear() {
-    Engine.clear(engine);
+    console.log("cleared");
     Render.clear(render);
+    World.clear(engine.world);
 
     render_func();
 }
@@ -122,12 +121,12 @@ Events.on(engine, 'collisionStart', function (event) {
             console.log("win");
             // uses the difference in position of the bodies to calculate accuracy
             console.log(Math.abs(bodyA.position.x - bodyB.position.x));
-            clear();
+            //clear();
         }
         // if one is floor and the other is floor, lose
         if (bodyA === ground || bodyB === ground) {
             console.log("lose");
-            clear();
+            //clear();
         }
     }
 });
