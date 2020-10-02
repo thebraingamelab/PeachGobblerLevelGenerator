@@ -30,8 +30,7 @@ var teethA = Bodies.polygon(SCREEN_WIDTH / 2 - 30 * SIZE_FACTOR, SCREEN_HEIGHT -
 Body.rotate(teethA, 7 * (Math.PI / 6));
 var teethB = Bodies.polygon(SCREEN_WIDTH / 2 + 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethB, 7 * (Math.PI / 6));
-var fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, { isStatic: true });
-fruit.collisionFilter.group = -1;
+var fruit;
 var ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 110 * SIZE_FACTOR, { isStatic: true });
 ground.collisionFilter.mask = -1;
 var butWidth = 150 * SIZE_FACTOR;
@@ -40,9 +39,13 @@ var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, b
 
 var canMove = true;
 
-var levelQueue = ["",""];
+var levelQueue = [];
 
 function render_func() {
+
+    fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, { isStatic: true });
+    fruit.collisionFilter.group = -1;
+
     // create a renderer
     render = Render.create({
         element: document.body,
@@ -68,8 +71,11 @@ function render_func() {
 
 function clear() {
     console.log("cleared");
-    Render.clear(render);
     World.clear(engine.world);
+    Engine.clear(engine);
+    Render.stop(render);
+    render.context = null;
+    render.textures = {};
 
     render_func();
 }
@@ -121,12 +127,12 @@ Events.on(engine, 'collisionStart', function (event) {
             console.log("win");
             // uses the difference in position of the bodies to calculate accuracy
             console.log(Math.abs(bodyA.position.x - bodyB.position.x));
-            //clear();
+            clear();
         }
         // if one is floor and the other is floor, lose
         if (bodyA === ground || bodyB === ground) {
             console.log("lose");
-            //clear();
+            clear();
         }
     }
 });
