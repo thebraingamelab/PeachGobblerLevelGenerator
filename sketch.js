@@ -39,10 +39,16 @@ var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, b
 
 var canMove = true;
 
-var levelQueue = [];
+var x = Bodies.circle(50, 50, 50, {isStatic : true});
+var y = Bodies.circle(25, 25, 25, {isStatic : true});
+
+var levelQueue = [[x], [y]];
 
 function render_func() {
 
+    canMove = true;
+
+    // why does fruit keep it's gravity
     fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, { isStatic: true });
     fruit.collisionFilter.group = -1;
 
@@ -59,7 +65,7 @@ function render_func() {
 
     // add all of the bodies to the world
     if(levelQueue.length != 0) {
-        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button]/*.concat(decode(levelQueue.shift()))*/);
+        World.add(engine.world, [ground, base, fruit, teethA, teethB, mouth, button].concat(levelQueue.shift())/*.concat(decode(levelQueue.shift()))*/);
     }
 
     // run the engine
