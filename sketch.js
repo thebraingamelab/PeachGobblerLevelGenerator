@@ -48,7 +48,7 @@ function render_func() {
 
     canMove = true;
 
-    // why does fruit keep it's gravity
+    // why does fruit keep it's gravity?
     fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, { isStatic: true });
     fruit.collisionFilter.group = -1;
 
