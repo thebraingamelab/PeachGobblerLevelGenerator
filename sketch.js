@@ -14,12 +14,7 @@ var Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
-// creates an engine
-var engine = Engine.create()
-
-// Makes gravity that scales with height
-// for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
-engine.world.gravity.y = SIZE_FACTOR * .95;
+var engine;
 
 var render;
 
@@ -47,6 +42,13 @@ var levelQueue = [[x], [y], [x], [y]];
 function render_func() {
 
     canMovePlayer = true;
+
+    // creates an engine
+    engine = Engine.create()
+
+    // Makes gravity that scales with height
+    // for some reason, at SIZE_FACTOR, collisions are not detected but they are at 95% original speed 
+    engine.world.gravity.y = SIZE_FACTOR * .95;
 
     // why does fruit keep it's gravity?
     // it should clear after intitializing the new fruit
@@ -76,6 +78,28 @@ function render_func() {
 
     // run the renderer
     Render.run(render);
+
+    // runs collision events (win/lose)
+    Events.on(engine, 'collisionStart', function (event) {
+        var pairs = event.pairs;
+        var bodyA = pairs[0].bodyA;
+        var bodyB = pairs[0].bodyB;
+
+        if (bodyA === fruit || bodyB === fruit) {
+            // if one is mouth and the other is fruit, win condition
+            if (bodyA === mouth || bodyB === mouth) {
+                console.log("win");
+                // uses the difference in position of the bodies to calculate accuracy
+                console.log(Math.abs(bodyA.position.x - bodyB.position.x));
+                clear();
+            }
+            // if one is ground and the other is fruit, lose
+            if (bodyA === ground || bodyB === ground) {
+                console.log("lose");
+                clear();
+            }
+        }
+    });
 }
 
 function clear() {
@@ -123,28 +147,6 @@ function startHuh(event) {
         phase2();
     }
 }
-
-// runs collision events (win/lose)
-Events.on(engine, 'collisionStart', function (event) {
-    var pairs = event.pairs;
-    var bodyA = pairs[0].bodyA;
-    var bodyB = pairs[0].bodyB;
-
-    if (bodyA === fruit || bodyB === fruit) {
-        // if one is mouth and the other is fruit, win condition
-        if (bodyA === mouth || bodyB === mouth) {
-            console.log("win");
-            // uses the difference in position of the bodies to calculate accuracy
-            console.log(Math.abs(bodyA.position.x - bodyB.position.x));
-            clear();
-        }
-        // if one is ground and the other is fruit, lose
-        if (bodyA === ground || bodyB === ground) {
-            console.log("lose");
-            clear();
-        }
-    }
-});
 
 // takes in a level json, returns the level as an array of Matte.js Bodies
 function decode(shapesText) {
