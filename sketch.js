@@ -138,7 +138,7 @@ function phase2() {
 }
 
 // checks if the start button is pressed
-function startHuh(event) {
+function startButtonPressed(event) {
     var mousex = event.touches[0].clientX;
     var mousey = event.touches[0].clientY;
     var butxrange = [button.position.x - butWidth / 2, button.position.x + butWidth / 2];
