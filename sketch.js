@@ -37,19 +37,22 @@ var butWidth = 150 * SIZE_FACTOR;
 var butHeight = 100 * SIZE_FACTOR;
 var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, butWidth, butHeight, { isStatic: true });
 
-var canMove = true;
+var canMovePlayer = true;
 
 var x = Bodies.circle(50, 50, 50, {isStatic : true});
 var y = Bodies.circle(25, 25, 25, {isStatic : true});
 
-var levelQueue = [[x], [y]];
+var levelQueue = [[x], [y], [x], [y]];
 
 function render_func() {
 
-    canMove = true;
+    canMovePlayer = true;
 
     // why does fruit keep it's gravity?
-    fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, { isStatic: true });
+    // it should clear after intitializing the new fruit
+    // maybe place an object under it that's invisible?
+    // or make a super script that intializes this script every time
+    fruit = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS, {isStatic : true});
     fruit.collisionFilter.group = -1;
 
     // create a renderer
@@ -88,7 +91,7 @@ function clear() {
 
 // activates on hold and drag
 function move(event) {
-    if (canMove) {
+    if (canMovePlayer) {
         var mousex = event.touches[0].clientX;
         if (mousex > SCREEN_WIDTH) {
             mousex = SCREEN_WIDTH;
@@ -106,7 +109,7 @@ function move(event) {
 
 // makes the player unable to move and starts the fruit's physics
 function phase2() {
-    canMove = false;
+    canMovePlayer = false;
     Body.setStatic(fruit, false);
 }
 
@@ -135,7 +138,7 @@ Events.on(engine, 'collisionStart', function (event) {
             console.log(Math.abs(bodyA.position.x - bodyB.position.x));
             clear();
         }
-        // if one is floor and the other is floor, lose
+        // if one is ground and the other is fruit, lose
         if (bodyA === ground || bodyB === ground) {
             console.log("lose");
             clear();
