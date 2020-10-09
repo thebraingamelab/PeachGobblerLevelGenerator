@@ -1,43 +1,43 @@
 // constants
-var SCREEN_WIDTH = 360;
-var SCREEN_HEIGHT = 640;
-var SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
+let SCREEN_WIDTH = 360;
+let SCREEN_HEIGHT = 640;
+let SIZE_FACTOR = SCREEN_WIDTH * SCREEN_HEIGHT / 640000;
 
-var BALL_RADIUS = SCREEN_WIDTH/20;
-var MOUTH_SIZE = SCREEN_WIDTH/5;
+let BALL_RADIUS = SCREEN_WIDTH/20;
+let MOUTH_SIZE = SCREEN_WIDTH/5;
 
 // module aliases
-var Engine = Matter.Engine,
+let Engine = Matter.Engine,
     Render = Matter.Render,
     World = Matter.World,
     Bodies = Matter.Bodies,
     Body = Matter.Body,
     Events = Matter.Events;
 
-var engine;
+let engine;
 
-var render;
+let render;
 
 // creates all necessary game objects
-var base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
-var mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 170 * SIZE_FACTOR, MOUTH_SIZE, MOUTH_SIZE/2, { isStatic: true });
-var teethA = Bodies.polygon(SCREEN_WIDTH / 2 - 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
+let base = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 110 * SIZE_FACTOR, 100 * SIZE_FACTOR, 160 * SIZE_FACTOR, { isStatic: true });
+let mouth = Bodies.rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 170 * SIZE_FACTOR, MOUTH_SIZE, MOUTH_SIZE/2, { isStatic: true });
+let teethA = Bodies.polygon(SCREEN_WIDTH / 2 - 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethA, 7 * (Math.PI / 6));
-var teethB = Bodies.polygon(SCREEN_WIDTH / 2 + 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
+let teethB = Bodies.polygon(SCREEN_WIDTH / 2 + 30 * SIZE_FACTOR, SCREEN_HEIGHT - 200 * SIZE_FACTOR, 3, 20 * SIZE_FACTOR, { isStatic: true })
 Body.rotate(teethB, 7 * (Math.PI / 6));
-var fruit;
-var ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 110 * SIZE_FACTOR, { isStatic: true });
+let fruit;
+let ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 110 * SIZE_FACTOR, { isStatic: true });
 ground.collisionFilter.mask = -1;
-var butWidth = 150 * SIZE_FACTOR;
-var butHeight = 100 * SIZE_FACTOR;
-var button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, butWidth, butHeight, { isStatic: true });
+let butWidth = 150 * SIZE_FACTOR;
+let butHeight = 100 * SIZE_FACTOR;
+let button = Bodies.rectangle(SCREEN_WIDTH - butHeight * 1.5, butHeight * 1.5, butWidth, butHeight, { isStatic: true });
 
-var canMovePlayer = true;
+let canMovePlayer = true;
 
-var x = Bodies.circle(50, 50, 50, {isStatic : true});
-var y = Bodies.circle(25, 25, 25, {isStatic : true});
+let x = Bodies.circle(50, 50, 50, {isStatic : true});
+let y = Bodies.circle(25, 25, 25, {isStatic : true});
 
-var levelQueue = [[x], [y], [x], [y]];
+let levelQueue = [[x], [y], [x], [y]];
 
 function render_func() {
 
@@ -81,9 +81,9 @@ function render_func() {
 
     // runs collision events (win/lose)
     Events.on(engine, 'collisionStart', function (event) {
-        var pairs = event.pairs;
-        var bodyA = pairs[0].bodyA;
-        var bodyB = pairs[0].bodyB;
+        let pairs = event.pairs;
+        let bodyA = pairs[0].bodyA;
+        let bodyB = pairs[0].bodyB;
 
         if (bodyA === fruit || bodyB === fruit) {
             // if one is mouth and the other is fruit, win condition
@@ -116,7 +116,7 @@ function clear() {
 // activates on hold and drag
 function move(event) {
     if (canMovePlayer) {
-        var mousex = event.touches[0].clientX;
+        let mousex = event.touches[0].clientX;
         if (mousex > SCREEN_WIDTH) {
             mousex = SCREEN_WIDTH;
         }
@@ -139,10 +139,10 @@ function phase2() {
 
 // checks if the start button is pressed
 function startButtonPressed(event) {
-    var mousex = event.touches[0].clientX;
-    var mousey = event.touches[0].clientY;
-    var butxrange = [button.position.x - butWidth / 2, button.position.x + butWidth / 2];
-    var butyrange = [button.position.y - butHeight / 2, button.position.y + butHeight / 2];
+    let mousex = event.touches[0].clientX;
+    let mousey = event.touches[0].clientY;
+    let butxrange = [button.position.x - butWidth / 2, button.position.x + butWidth / 2];
+    let butyrange = [button.position.y - butHeight / 2, button.position.y + butHeight / 2];
     if (mousex >= butxrange[0] && mousex <= butxrange[1] && mousey >= butyrange[0] && mousey <= butyrange[1]) {
         phase2();
     }
@@ -150,12 +150,12 @@ function startButtonPressed(event) {
 
 // takes in a level json, returns the level as an array of Matte.js Bodies
 function decode(shapesText) {
-    var parse = JSON.parse(shapesText);
+    let parse = JSON.parse(shapesText);
     console.log(parse);
     shapes = [];
 
-    for (var i = 0; i < parse.length; i++) {
-        var shape;
+    for (let i = 0; i < parse.length; i++) {
+        let shape;
 
         switch (parse[i].shapeType) {
             case 0:
