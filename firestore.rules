@@ -1,0 +1,173 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /emails/{emailID} {
+      allow create: if request.resource.data.email is string &&
+        request.resource.data.email.size() > 4 &&
+        request.resource.data.email.size() < 320;
+    }
+
+    match /experiment_data/{game}/sessions/{session_id} {
+      allow create, update: if request.resource.data.user_id == request.auth.uid;
+    }
+  
+    match /experiment_data/{game}/sessions/{session_id}/levels/{level_id} {
+      allow create: if get(/databases/$(database)/documents/experiment_data/$(game)/sessions/$(session_id)).data.user_id == request.auth.uid &&
+         get(/databases/$(database)/documents/experiment_data/$(game)/sessions/$(session_id)).data.timestamp.end == null &&
+         request.resource.data.diff({}).addedKeys() == ["level_parameters", "performance"].toSet();
+    }
+
+    match /rooms/{roomID} {
+    
+    	function requestedRoomCodeIsValid() {
+    		return
+      		request.resource.id is string &&
+      		request.resource.id.size() == 4;
+    	}
+      
+      function existingRoomCodeIsValid() {
+      	return
+        	resource.id is string &&
+          resource.id.size() == 4;
+      }
+
+      function roomDoesNotExist() {
+        return resource == null;
+      }
+
+      function playerIsInRoom() {
+        return (request.auth.uid in resource.data.players);
+      }
+
+      function playerIsNotInRoom() {
+        return !(request.auth.uid in resource.data.players);
+      }
+
+      function isHost() {
+        return
+          resource.data.host.uid is string &&
+          request.auth.uid == resource.data.host.uid;
+      }
+
+      function roomIsAvailable() {
+        return
+          resource.data.players.keys().size() == 0 &&
+          resource.data.host == null;
+      }
+
+      function playerIsJoiningRoom(){
+        return
+          request.resource.data.players.diff(resource.data.players).addedKeys() == [request.auth.uid].toSet();
+      }
+
+      function playerIsLeavingRoom(){
+        return
+          request.resource.data.players.diff(resource.data.players).removedKeys() == [request.auth.uid].toSet();
+      }
+
+      function hostIsLeavingRoom(){
+        return
+          isHost() &&
+          request.resource.data.players.keys().size() == 0 &&
+          request.resource.data.host == null;
+      }
+
+      function hostIsStartingParty(){
+        return
+          isHost() &&
+          resource.data.started == false &&
+          request.resource.data.started == true &&
+          resource.data.state == 'waiting' &&
+          request.resource.data.state == 'lobby';
+      }
+
+      function playerIsGettingReady() {
+        return
+          resource.data.players[request.auth.uid].ready == false &&
+          request.resource.data.players[request.auth.uid].ready == true &&
+          resource.data.state == 'lobby';
+      }
+      
+      function playerIsProceeded() {
+        return
+          resource.data.players[request.auth.uid].proceeded == false &&
+          request.resource.data.players[request.auth.uid].proceeded == true &&
+          resource.data.state == 'ranking';
+      }
+      
+      function playerFinishedGame(){
+        return
+          resource.data.players[request.auth.uid].finishedGame == false &&
+          request.resource.data.players[request.auth.uid].finishedGame == true &&
+          resource.data.state == 'game';
+      }
+      
+      function allPlayersAreFinished(){
+        return
+          resource.data.state == 'game' &&
+          request.resource.data.state == 'ranking';
+      }
+      
+      function resetPlayersGameStatus(){
+        return
+          resource.data.state == 'ranking' &&
+          request.resource.data.players[request.auth.uid].finishedGame == false;
+      }
+      
+      function goToNextGame(){
+        return
+          resource.data.state == 'ranking' &&
+          request.resource.data.state == 'lobby' &&
+          resource.data.players[request.auth.uid].ready == true &&
+          request.resource.data.players[request.auth.uid].ready == false;
+      }
+
+
+    
+    	allow read: if
+        roomDoesNotExist() ||
+        existingRoomCodeIsValid();
+        
+      allow create: if
+        requestedRoomCodeIsValid();
+      
+      allow update: if
+        requestedRoomCodeIsValid() && (
+
+          // host is taking over available room ////
+          (roomIsAvailable()) ||
+
+          // player is joining room ////
+          (playerIsJoiningRoom() && playerIsNotInRoom() && !resource.data.started) ||
+
+          // player is leaving room ////
+          (playerIsLeavingRoom() && playerIsInRoom()) ||
+
+          // host is leaving room ////
+          (hostIsLeavingRoom()) ||
+
+          // host is starting game ////
+          (hostIsStartingParty()) ||
+
+          // player is ready ////
+          (playerIsGettingReady())||
+          
+          // player is proceeded ////
+          (playerIsProceeded())||
+
+          // player finishes games ////
+          (playerFinishedGame()) ||
+          
+          // from round ranking to total ranking ////
+          (allPlayersAreFinished()) ||
+          
+          // reset all players' finishedGame status back to false for the next round and update total score////
+          (resetPlayersGameStatus()) ||
+          
+          // transition to next game's lobby
+          (goToNextGame())
+
+        )
+    }
+  }
+}
