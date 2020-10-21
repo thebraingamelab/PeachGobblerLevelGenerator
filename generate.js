@@ -67,11 +67,11 @@ function gen() {
     xposs = [];
 
     fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 50, BALL_RADIUS);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2 + BALL_RADIUS / 5, 50, BALL_RADIUS);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 50 + BALL_RADIUS / 5, BALL_RADIUS);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 50, BALL_RADIUS);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 50 - BALL_RADIUS / 5, BALL_RADIUS);
+    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR, BALL_RADIUS);
+    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2 + BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
+    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR + BALL_RADIUS / 5, BALL_RADIUS);
+    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
+    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR - BALL_RADIUS / 5, BALL_RADIUS);
 
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
