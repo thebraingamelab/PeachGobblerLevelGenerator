@@ -2,8 +2,9 @@ let canv = canvas;
 let beatable = 0;
 let total = 0;
 
-let SCREEN_WIDTH = 360;
-let SCREEN_HEIGHT = 640;
+// modified so it works with config dimensions
+let SCREEN_WIDTH = 540;
+let SCREEN_HEIGHT = 960;
 let SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 let BALL_RADIUS = SCREEN_WIDTH/20;
 
