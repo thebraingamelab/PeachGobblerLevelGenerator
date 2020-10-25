@@ -1,4 +1,3 @@
-let canv = canvas;
 let beatable = 0;
 let total = 0;
 
@@ -42,7 +41,7 @@ function gen() {
     // create a renderer
     render = Render.create({
         element: document.body,
-        canvas: canv,
+        canvas: canvas,
         options: {
             width: SCREEN_WIDTH,
             height: SCREEN_HEIGHT
