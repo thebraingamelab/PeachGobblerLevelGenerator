@@ -10,7 +10,7 @@ let BALL_RADIUS = SCREEN_WIDTH/20;
 
 let max = 0;
 
-// all letiables from gen are global to allow for data replacement
+// all variables from gen are global to allow for data replacement
 let engine,
     renderer,
     time,
@@ -236,8 +236,8 @@ function kill(render, engine) {
     gen();
 }
 
-// calculates letiance
-function letiance(nums) {
+// calculates variance
+function variance(nums) {
     let mean = 0,
         numerator = 0;
     for (let i = 0; i < nums.length; i++) {
@@ -252,23 +252,23 @@ function letiance(nums) {
 }
 
 // Scoring algorithm
-// Uses letiance to calculate scoring
+// Uses variance to calculate scoring
 function score() {
     // returns -1 if not beatable
     if (!win) {
         return -1;
     }
     beatable++;
-    let leti = letiance(xposs);
+    let vari = variance(xposs);
 
     // uncomment below to allow for levels to be uploaded
-    //saveGameplayData(leti, JSON.stringify(encodedShapes));
+    //saveGameplayData(vari, JSON.stringify(encodedShapes));
     console.log("genshapes");
     console.log(genshapes);
     decode(JSON.stringify(encodedShapes));
-    max = Math.max(leti, max);
+    max = Math.max(vari, max);
     console.log("Max: " + max);
-    return leti;
+    return vari;
 }
 
 function decode(shapesText) {
