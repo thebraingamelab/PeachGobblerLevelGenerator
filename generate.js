@@ -1,8 +1,7 @@
-// hi
 let beatable = 0;
 let total = 0;
 
-// modified so it works with config dimensions
+// modified so it works with config dimensions from player
 let SCREEN_WIDTH = 540;
 let SCREEN_HEIGHT = 960;
 let SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
