@@ -1,3 +1,7 @@
+const firebase = require("firebase");
+// Required for side-effects
+require("firebase/firestore");
+
 let beatable = 0;
 let total = 0;
 
@@ -12,7 +16,7 @@ let max = 0;
 
 // all variables from gen are global to allow for data replacement
 let engine,
-    renderer,
+    render,
     time,
     border0,
     border1,
@@ -308,21 +312,6 @@ function decode(shapesText) {
 
 // Uploads data to dynamo db
 function saveGameplayData(score, geo) {
-
-    let payload = {
-        LevelID: randomID(8),
-        Score: score,
-        Geometry: geo
-    };
-
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.thebraingamelab.org/peachgobblerlevelsave');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function () {
-        if (xhr.status == 200) {
-        }
-    };
-    xhr.send(JSON.stringify(payload));
 }
 
 function randomID(length) {
