@@ -1,3 +1,4 @@
+// hi
 let beatable = 0;
 let total = 0;
 
