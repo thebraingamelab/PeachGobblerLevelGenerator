@@ -1,3 +1,5 @@
+let db = firebase.firestore();
+
 let canv = canvas;
 let beatable = 0;
 let total = 0;
@@ -307,19 +309,18 @@ function decode(shapesText) {
 }
 
 
-// Uploads data to dynamo db
-function saveGameplayData(score, geo) {
-}
-
-function randomID(length) {
-    let result = '';
-    length = (typeof length == 'undefined') ? 32 : length;
-    let chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-    for (let i = 0; i < length; i++) {
-        result += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return result;
-
+// Uploads data to cloud firestore
+function saveGameplayData(sco, geo) {
+    db.collection("PGLevels").add({
+        score: sco,
+        geometry: geo
+    })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
 }
 
 gen();
