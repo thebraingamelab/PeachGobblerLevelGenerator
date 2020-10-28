@@ -8,7 +8,6 @@ let total = 0;
 let SCREEN_WIDTH = 540;
 let SCREEN_HEIGHT = 960;
 let SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
-// possibly make two size factors? one for x and one for y?
 let BALL_RADIUS = SCREEN_WIDTH/20;
 
 let max = 0;
