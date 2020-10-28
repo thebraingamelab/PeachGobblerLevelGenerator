@@ -1,7 +1,4 @@
-const firebase = require("firebase");
-// Required for side-effects
-require("firebase/firestore");
-
+let canv = canvas;
 let beatable = 0;
 let total = 0;
 
@@ -45,7 +42,7 @@ function gen() {
     // create a renderer
     render = Render.create({
         element: document.body,
-        canvas: canvas,
+        canvas: canv,
         options: {
             width: SCREEN_WIDTH,
             height: SCREEN_HEIGHT
