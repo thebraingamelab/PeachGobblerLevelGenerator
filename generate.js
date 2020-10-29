@@ -1,4 +1,3 @@
-Analytics.setUserID("generator");
 const db = firebase.firestore();
 
 let canv = canvas;
