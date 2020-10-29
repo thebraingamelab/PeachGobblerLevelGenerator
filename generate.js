@@ -1,4 +1,5 @@
-let db = firebase.firestore();
+Analytics.setUserID("generator");
+const db = firebase.firestore();
 
 let canv = canvas;
 let beatable = 0;
