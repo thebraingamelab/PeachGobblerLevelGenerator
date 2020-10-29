@@ -266,8 +266,8 @@ function score() {
     beatable++;
     let vari = variance(xposs);
 
-    // comment below to prevent level uploading
-    saveGameplayData(vari, JSON.stringify(encodedShapes));
+    // uncomment below to allow level uploading
+    //saveGameplayData(vari, JSON.stringify(encodedShapes));
 
     return vari;
 }
