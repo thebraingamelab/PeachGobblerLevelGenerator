@@ -265,7 +265,7 @@ function score() {
     beatable++;
     let vari = variance(xposs);
 
-    saveGameplayData(vari, JSON.stringify(encodedShapes));
+    //saveGameplayData(vari, JSON.stringify(encodedShapes));
 
     return vari;
 }
