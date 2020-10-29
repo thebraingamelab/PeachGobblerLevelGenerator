@@ -266,48 +266,10 @@ function score() {
     beatable++;
     let vari = variance(xposs);
 
-    // uncomment below to allow for levels to be uploaded
-    //saveGameplayData(vari, JSON.stringify(encodedShapes));
-    console.log("genshapes");
-    console.log(genshapes);
-    decode(JSON.stringify(encodedShapes));
-    max = Math.max(vari, max);
-    console.log("Max: " + max);
+    // comment below to prevent level uploading
+    saveGameplayData(vari, JSON.stringify(encodedShapes));
+
     return vari;
-}
-
-function decode(shapesText) {
-    let parse = JSON.parse(shapesText);
-    console.log("json");
-    console.dir(parse);
-    shapes = [];
-
-    for (let i = 0; i < parse.length; i++) {
-        let shape;
-
-        switch (parse[i].shapeType) {
-            case 0:
-                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.length, parse[i].properties.length, { isStatic: true });
-                break;
-            case 1:
-                shape = Bodies.rectangle(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, { isStatic: true });
-                break;
-            case 2:
-                shape = Bodies.circle(parse[i].xpos, parse[i].ypos, parse[i].properties.radius, { isStatic: true });
-                break;
-            case 3:
-            case 4:
-                shape = Bodies.trapezoid(parse[i].xpos, parse[i].ypos, parse[i].properties.width, parse[i].properties.height, parse[i].properties.slope, { isStatic: true });
-        }
-
-        shape.collisionFilter.mask = -1;
-        shape.friction = 0.025;
-        Body.rotate(shape, parse[i].rotation);
-
-        shapes[i] = shape;
-    }
-
-    return shapes;
 }
 
 
