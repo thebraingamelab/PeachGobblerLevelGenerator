@@ -1,5 +1,13 @@
 const db = firebase.firestore();
 
+// module aliases
+let Engine = Matter.Engine,
+    Render = Matter.Render,
+    World = Matter.World,
+    Bodies = Matter.Bodies,
+    Body = Matter.Body,
+    Events = Matter.Events;
+
 let canv = canvas;
 let beatable = 0;
 let total = 0;
@@ -29,14 +37,6 @@ let engine,
     rand,
     genshapes,
     encodedShapes;
-
-// module aliases
-let Engine = Matter.Engine,
-    Render = Matter.Render,
-    World = Matter.World,
-    Bodies = Matter.Bodies,
-    Body = Matter.Body,
-    Events = Matter.Events;
 
 function gen() {
     // create an engine
