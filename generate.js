@@ -12,7 +12,7 @@ let canv = canvas;
 let beatable = 0;
 let total = 0;
 
-// modified so it works with config dimensions from player
+// modified so it works with config dimensions from Peach Gobbler player
 let SCREEN_WIDTH = 540;
 let SCREEN_HEIGHT = 960;
 
