@@ -16,6 +16,7 @@ let total = 0;
 let SCREEN_WIDTH = 540;
 let SCREEN_HEIGHT = 960;
 
+// Magic number alert
 // 640000 is the width * height used during initial development
 let SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 let BALL_RADIUS = SCREEN_WIDTH/20;
@@ -201,6 +202,7 @@ function gen() {
         for (let i = 0; i < fruit.length; i++) {
             if ((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
                 xposs[i] = fruit[i].position.x;
+                // teleports fruits off screen to avoid extra collisions
                 fruit[i].position.y = SCREEN_HEIGHT + 1000;
                 hits++;
                 win = hits >= fruit.length;
