@@ -8,9 +8,11 @@ let Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
+// global variables
 let canv = canvas;
 let beatable = 0;
 let total = 0;
+let max = 0;
 
 // modified so it works with config dimensions from Peach Gobbler player
 let SCREEN_WIDTH = 540;
@@ -20,8 +22,6 @@ let SCREEN_HEIGHT = 960;
 // 640000 is the width * height used during initial development
 let SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 let BALL_RADIUS = SCREEN_WIDTH/20;
-
-let max = 0;
 
 // all variables from gen are global to allow for data replacement
 let engine,
