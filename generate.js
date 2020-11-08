@@ -59,7 +59,7 @@ function gen() {
     // sets timer for 5 seconds that kills the level and generates a new one after 8 seconds of inactivity
     time = setTimeout(function () { kill(render, engine); }, 8000);
 
-    // create all game objects
+    // create all physical game objects
     shapes = [];
 
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
