@@ -1,4 +1,4 @@
-const db = firebase.firestore();
+//const db = firebase.firestore();
 
 // module aliases
 let Engine = Matter.Engine,
@@ -86,19 +86,20 @@ function gen() {
     shapes = [ground, border0, border1].concat(fruit);
 
     // generates random shapes
-    rand = Math.ceil(Math.random() * 4) + 1;
+    rand = Math.ceil(Math.random() * 8) + 1;
 
     genshapes = [];
     encodedShapes = [];
 
     for (let i = 0; i < rand; i++) {
-        let randshape = Math.floor(Math.random() * 5);
+        let randshape = Math.floor(Math.random() * 7);
 
         let randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR),
             randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
 
         let shape;
         prop = {};
+        let rot; 
 
         switch (randshape) {
 
@@ -112,33 +113,38 @@ function gen() {
                     length: side
                 };
                 shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
+                rot = Math.random() * 2 * Math.PI/8;
                 break;
 
-            // 1 for rectangle
+            // 1-3 for rectangle
             case 1:
+            case 2:
+            case 3:
                 let width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
-                    height = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
+                    height = width/(Math.ceil((Math.random() * 5))+1);
                 prop = {
                     width: width,
                     height: height
                 };
                 shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
+                rot = (Math.random() * 2 - 1) * Math.PI/8;
                 break;
 
-            // 2 for circle
-            case 2:
+            // 4 for circle
+            case 4:
                 let radius = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     radius: radius
                 };
                 shape = Bodies.circle(randX, randY, radius, { isStatic: true });
+                rot = 0;
                 break;
 
-            // 3 for isoceles triangle
-            // 4 for right triangle
-            case 3:
-            case 4:
-                let slope = randshape - 2,
+            // 5 for isoceles triangle
+            // 6 for right triangle
+            case 5:
+            case 6:
+                let slope = randshape - 4,
                     base = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
                     tri_height = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
@@ -147,12 +153,11 @@ function gen() {
                     height: tri_height
                 }
                 shape = Bodies.trapezoid(randX, randY, base, tri_height, slope, { isStatic: true });
+                rot =  Math.random() * 2 * Math.PI;
                 break;
         }
         shape.collisionFilter.mask = -1;
         shape.friction = 0.025;
-
-        rot = Math.random() * 2 * Math.PI;
 
         Body.rotate(shape, rot);
         genshapes[i] = shape;
