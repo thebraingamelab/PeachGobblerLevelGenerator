@@ -85,8 +85,8 @@ function gen() {
 
     shapes = [ground, border0, border1].concat(fruit);
 
-    // generates random shapes
-    rand = Math.ceil(Math.random() * 8) + 1;
+    // generates random number of shapes
+    rand = Math.ceil(Math.random() * 7) + 2;
 
     genshapes = [];
     encodedShapes = [];
@@ -112,7 +112,8 @@ function gen() {
                     length: side
                 };
                 shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
-                rot = Math.random() * 2 * Math.PI/8;
+                // valid rotations are between 10 and 80 degrees
+                rot = (Math.random() * 0.39 + 0.06) * Math.PI;
                 break;
 
             // 1 for circle
@@ -154,7 +155,8 @@ function gen() {
                     height: height
                 };
                 shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
-                rot = (Math.random() * 2 - 1) * Math.PI/8;
+                // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
+                rot = Math.pow(-1, Math.floor(Math.random() * 2)) * (Math.random() * 0.19 + 0.06);
                 break;
         }
         shape.collisionFilter.mask = -1;
