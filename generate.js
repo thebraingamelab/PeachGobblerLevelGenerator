@@ -116,22 +116,8 @@ function gen() {
                 rot = Math.random() * 2 * Math.PI/8;
                 break;
 
-            // 1-3 for rectangle
+            // 1 for circle
             case 1:
-            case 2:
-            case 3:
-                let width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
-                    height = width/(Math.ceil((Math.random() * 5))+1);
-                prop = {
-                    width: width,
-                    height: height
-                };
-                shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
-                rot = (Math.random() * 2 - 1) * Math.PI/8;
-                break;
-
-            // 4 for circle
-            case 4:
                 let radius = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     radius: radius
@@ -140,11 +126,11 @@ function gen() {
                 rot = 0;
                 break;
 
-            // 5 for isoceles triangle
-            // 6 for right triangle
-            case 5:
-            case 6:
-                let slope = randshape - 4,
+            // 2 for isoceles triangle
+            // 3 for right triangle
+            case 2:
+            case 3:
+                let slope = randshape - 1,
                     base = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
                     tri_height = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
@@ -154,6 +140,21 @@ function gen() {
                 }
                 shape = Bodies.trapezoid(randX, randY, base, tri_height, slope, { isStatic: true });
                 rot =  Math.random() * 2 * Math.PI;
+                break;
+
+            // 4-7 for rectangle
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                let width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
+                    height = width/(Math.ceil((Math.random() * 5))+1);
+                prop = {
+                    width: width,
+                    height: height
+                };
+                shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
+                rot = (Math.random() * 2 - 1) * Math.PI/8;
                 break;
         }
         shape.collisionFilter.mask = -1;
