@@ -108,7 +108,7 @@ function gen() {
             default:
                 break;
             case 0:
-                let side = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
+                let side = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
                     length: side
                 };
