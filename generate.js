@@ -92,7 +92,7 @@ function gen() {
     encodedShapes = [];
 
     for (let i = 0; i < rand; i++) {
-        let randshape = Math.floor(Math.random() * 7);
+        let randshape = Math.floor(Math.random() * 10);
 
         let randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR),
             randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
@@ -106,7 +106,6 @@ function gen() {
             // 0 for square
             // default should never trigger. added here for contingency
             default:
-                break;
             case 0:
                 let side = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
                 prop = {
@@ -147,6 +146,7 @@ function gen() {
             case 5:
             case 6:
             case 7:
+            case 9:
                 let width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
                     height = width/(Math.ceil((Math.random() * 5))+1);
                 prop = {
