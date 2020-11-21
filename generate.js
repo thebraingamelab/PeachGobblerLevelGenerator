@@ -107,7 +107,7 @@ function gen() {
             // default should never trigger. added here for contingency
             default:
             case 0:
-                let side = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
+                let side = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
                 prop = {
                     length: side
                 };
@@ -118,7 +118,7 @@ function gen() {
 
             // 1 for circle
             case 1:
-                let radius = (Math.random() * (100 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
+                let radius = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
                 prop = {
                     radius: radius
                 };
@@ -131,8 +131,8 @@ function gen() {
             case 2:
             case 3:
                 let slope = randshape - 1,
-                    base = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
-                    tri_height = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR;
+                    base = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
+                    tri_height = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
                 prop = {
                     slope: slope,
                     width: base,
@@ -148,7 +148,7 @@ function gen() {
             case 6:
             case 7:
             case 9:
-                let width = (Math.random() * (200 - BALL_RADIUS) + BALL_RADIUS) * SIZE_FACTOR,
+                let width = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
                     height = width/(Math.ceil((Math.random() * 5))+1);
                 prop = {
                     width: width,
