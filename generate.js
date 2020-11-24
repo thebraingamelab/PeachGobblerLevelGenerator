@@ -156,6 +156,7 @@ function gen() {
                 };
                 shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
                 // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
+                // use decimals and pi to make rough radian amounts
                 rot = Math.pow(-1, Math.floor(Math.random() * 2)) * (Math.random() * 0.19 + 0.06);
                 break;
         }
