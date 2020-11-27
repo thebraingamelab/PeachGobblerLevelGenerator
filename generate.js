@@ -1,3 +1,4 @@
+// uncomment this before deploying
 //const db = firebase.firestore();
 
 // module aliases
@@ -277,6 +278,7 @@ function score() {
     beatable++;
     let vari = variance(xposs);
 
+    // uncomment this before deploying
     //saveGameplayData(vari, JSON.stringify(encodedShapes));
 
     return vari;
