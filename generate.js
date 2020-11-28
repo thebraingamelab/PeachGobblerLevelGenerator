@@ -22,7 +22,7 @@ let SCREEN_HEIGHT = 960;
 // Magic number alert
 // 640000 is the width * height used during initial development
 let SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
-let BALL_RADIUS = SCREEN_WIDTH/20;
+let BALL_RADIUS = SCREEN_WIDTH / 20;
 
 // all variables from gen are global to allow for data replacement
 let engine,
@@ -100,13 +100,15 @@ function gen() {
 
         let shape;
         prop = {};
-        let rot; 
+        let rot;
 
         switch (randshape) {
 
             // 0 for square
             // default should never trigger. added here for contingency
             default:
+                console.log("this should not trigger");
+
             case 0:
                 let side = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
                 prop = {
@@ -140,7 +142,7 @@ function gen() {
                     height: tri_height
                 }
                 shape = Bodies.trapezoid(randX, randY, base, tri_height, slope, { isStatic: true });
-                rot =  Math.random() * 2 * Math.PI;
+                rot = Math.random() * 2 * Math.PI;
                 break;
 
             // 4-7 for rectangle
@@ -150,7 +152,7 @@ function gen() {
             case 7:
             case 9:
                 let width = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
-                    height = width/(Math.ceil((Math.random() * 5))+1);
+                    height = width / (Math.ceil((Math.random() * 5)) + 1);
                 prop = {
                     width: width,
                     height: height
@@ -291,12 +293,12 @@ function saveGameplayData(sco, geo) {
         score: sco,
         geometry: geo
     })
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id);
-    })
-    .catch(function(error) {
-        console.error("Error adding document: ", error);
-    });
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function (error) {
+            console.error("Error adding document: ", error);
+        });
 }
 
 gen();
