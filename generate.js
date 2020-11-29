@@ -240,11 +240,11 @@ function gen() {
 function kill(render, engine) {
     console.log("Score: " + score());
 
-    Matter.Render.stop(render); // this only stops renderer but does not destroy canvas
+    Matter.Render.stop(render);
     Matter.World.clear(engine.world);
     Matter.Engine.clear(engine);
 
-    render.canvas.remove(); // this removes the canvas
+    render.canvas.remove();
     render.canvas = null;
     render.context = null;
     render.textures = {};
