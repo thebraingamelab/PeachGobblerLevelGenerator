@@ -236,7 +236,6 @@ function gen() {
 }
 
 // stops render and engine and makes it ready to restart
-
 function kill(render, engine) {
     console.log("Score: " + score());
 
