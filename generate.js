@@ -92,6 +92,8 @@ function gen() {
     genshapes = [];
     encodedShapes = [];
 
+    let shape_centers = [];
+
     for (let i = 0; i < rand; i++) {
         let randshape = Math.floor(Math.random() * 10);
 
@@ -101,6 +103,10 @@ function gen() {
         let shape;
         prop = {};
         let rot;
+
+        let center = [NaN, NaN];
+
+        // NOTE - all rotations are around the center
 
         switch (randshape) {
 
@@ -117,6 +123,18 @@ function gen() {
                 shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
                 // valid rotations are between 10 and 80 degrees
                 rot = (Math.random() * 0.39 + 0.06) * Math.PI;
+
+                // find center of shape and add it to shape_centers
+                center[0] = randX + side / 2;
+                center[1] = randY + side / 2;
+
+                let closest = find_closest(center, shape_centers);
+                if (closest) {
+                    // do algorithm stuff
+                }
+
+                shape_centers.append(center);
+
                 break;
 
             // 1 for circle
@@ -233,6 +251,10 @@ function gen() {
             }
         }
     });
+}
+
+function find_closest(point, shape_centers) {
+    // do stuff
 }
 
 // stops render and engine and makes it ready to restart
