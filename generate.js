@@ -86,6 +86,13 @@ function gen() {
 
     shapes = [ground, border0, border1].concat(fruit);
 
+
+
+
+
+
+
+
     // generates random number of shapes
     rand = Math.ceil(Math.random() * 7) + 2;
 
@@ -95,91 +102,118 @@ function gen() {
     let shape_centers = [];
 
     for (let i = 0; i < rand; i++) {
-        let randshape = Math.floor(Math.random() * 10);
 
-        let randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR),
+        let randX, randY, shape, rot, prop, center, randshape;
+        let contin = false;
+
+        while (!contin) {
+            randshape = Math.floor(Math.random() * 10);
+
+            randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR);
             randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
 
-        let shape;
-        prop = {};
-        let rot;
+            shape;
+            prop = {};
+            rot;
 
-        let center = [NaN, NaN];
+            center = [NaN, NaN];
 
-        // NOTE - all rotations are around the center
+            // NOTE - all rotations are around the center
 
-        switch (randshape) {
+            switch (randshape) {
 
-            // 0 for square
-            // default should never trigger. added here for contingency
-            default:
-                console.log("this should not trigger");
+                // 0 for square
 
-            case 0:
-                let side = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
-                prop = {
-                    length: side
-                };
-                shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
-                // valid rotations are between 10 and 80 degrees
-                rot = (Math.random() * 0.39 + 0.06) * Math.PI;
+                case 0:
+                    let side = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                    prop = {
+                        length: side
+                    };
+                    shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
+                    // valid rotations are between 10 and 80 degrees
+                    rot = (Math.random() * 1.22 + 0.17) * Math.PI;
 
-                // find center of shape and add it to shape_centers
-                center[0] = randX + side / 2;
-                center[1] = randY + side / 2;
+                    // find center of shape and add it to shape_centers
+                    center[0] = randX + side / 2;
+                    center[1] = randY + side / 2;
+                    break;
 
-                // use this to determine if a shape should be placed
-                let contin = place_shape();
+                // 1 for circle
+                case 1:
+                    let radius = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                    prop = {
+                        radius: radius
+                    };
+                    shape = Bodies.circle(randX, randY, radius, { isStatic: true });
+                    rot = 0;
 
-                shape_centers.append(center);
+                    // find center of shape and add it to shape_centers
+                    center[0] = randX + radius;
+                    center[1] = randY + radius;
+                    break;
 
-                break;
+                // 2 for isoceles triangle
+                // 3 for right triangle
+                case 2:
+                case 3:
+                    let slope = randshape - 1,
+                        base = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
+                        tri_height = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                    prop = {
+                        slope: slope,
+                        width: base,
+                        height: tri_height
+                    }
+                    shape = Bodies.trapezoid(randX, randY, base, tri_height, slope, { isStatic: true });
+                    rot = Math.random() * 2 * Math.PI;
 
-            // 1 for circle
-            case 1:
-                let radius = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
-                prop = {
-                    radius: radius
-                };
-                shape = Bodies.circle(randX, randY, radius, { isStatic: true });
-                rot = 0;
-                break;
+                    // find center of shape and add it to shape_centers
+                    if (rot % Math.PI < Math.PI / 4 || rot % Math.PI > 3 * Math.PI / 4) {
+                        center[0] = randX + base / 2;
+                        center[1] = randY + tri_height / 2;
+                    }
+                    else {
+                        center[0] = randX + tri_height / 2;
+                        center[1] = randY + base / 2;
+                    }
+                    break;
 
-            // 2 for isoceles triangle
-            // 3 for right triangle
-            case 2:
-            case 3:
-                let slope = randshape - 1,
-                    base = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
-                    tri_height = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
-                prop = {
-                    slope: slope,
-                    width: base,
-                    height: tri_height
-                }
-                shape = Bodies.trapezoid(randX, randY, base, tri_height, slope, { isStatic: true });
-                rot = Math.random() * 2 * Math.PI;
-                break;
+                // default should never trigger. added here for contingency
+                default:
+                    console.log("this should not trigger");
+                    console.log(randshape);
 
-            // 4-7 for rectangle
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 9:
-                let width = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
-                    height = width / (Math.ceil((Math.random() * 5)) + 1);
-                prop = {
-                    width: width,
-                    height: height
-                };
-                shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
-                // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
-                // multiply decimals and pi to make rough radian amounts
-                // 50% chance of positive or negative rotation
-                rot = Math.pow(-1, Math.floor(Math.random() * 2)) * (Math.random() * 0.19 + 0.06);
-                break;
+                // 4-7 for rectangle
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    let width = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
+                        height = width / (Math.ceil((Math.random() * 5)) + 1);
+                    prop = {
+                        width: width,
+                        height: height
+                    };
+                    shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
+                    // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
+                    // multiply decimals and pi to make rough radian amounts
+                    // 50% chance of positive or negative rotation
+                    rot = Math.pow(-1, Math.floor(Math.random() * 2)) * (Math.random() * 0.61 + 0.17);
+
+                    // find center of shape and add it to shape_centers
+                    center[0] = randX + width / 2;
+                    center[1] = randY + height / 2;
+                    break;
+            }
+
+            // use this to determine if a shape should be placed
+            contin = place_shape(center, shape_centers);
         }
+
+        shape_centers.push(center);
+
         shape.collisionFilter.mask = -1;
         shape.friction = 0.025;
 
@@ -266,9 +300,11 @@ function find_closest_distance(point, shape_centers) {
 
 // returns a boolean which determines if a shape should be placed
 function place_shape(point, shape_centers) {
+    const CON = -5;
+
     let closest_distance = find_closest_distance(point, shape_centers);
     if (closest_distance) {
-        let val = Math.pow(E, -1 * closest_distance);
+        let val = Math.pow(E, CON * closest_distance);
         let rand = Math.random();
         return (rand > val);
     }
