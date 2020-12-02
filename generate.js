@@ -128,10 +128,8 @@ function gen() {
                 center[0] = randX + side / 2;
                 center[1] = randY + side / 2;
 
-                let closest = find_closest(center, shape_centers);
-                if (closest) {
-                    // do algorithm stuff
-                }
+                // use this to determine if a shape should be placed
+                let contin = place_shape();
 
                 shape_centers.append(center);
 
@@ -253,8 +251,28 @@ function gen() {
     });
 }
 
-function find_closest(point, shape_centers) {
-    // do stuff
+// O(n) function to find closest shape center to point
+function find_closest_distance(point, shape_centers) {
+    if (shape_centers.length == 0) {
+        return null;
+    }
+    let min_distance = Number.MAX_SAFE_INTEGER;
+    for (center in shape_centers) {
+        let distance = Math.sqrt(Math.pow(point[0] - center[0], 2) + Math.pow(point[1] - center[1], 2));
+        min_distance = Math.min(distance, min_distance);
+    }
+    return min_distance;
+}
+
+// returns a boolean which determines if a shape should be placed
+function place_shape(point, shape_centers) {
+    let closest_distance = find_closest_distance(point, shape_centers);
+    if (closest_distance) {
+        let val = Math.pow(E, -1 * closest_distance);
+        let rand = Math.random();
+        return (rand > val);
+    }
+    return true;
 }
 
 // stops render and engine and makes it ready to restart
