@@ -91,7 +91,7 @@ function gen() {
 
 
 
-
+    // begin level generation
 
     // generates random number of shapes
     rand = Math.ceil(Math.random() * 7) + 2;
@@ -288,7 +288,7 @@ function gen() {
 // O(n) function to find closest shape center to point
 function find_closest_distance(point, shape_centers) {
     if (shape_centers.length == 0) {
-        return null;
+        return false;
     }
     let min_distance = Number.MAX_SAFE_INTEGER;
     for (center in shape_centers) {
