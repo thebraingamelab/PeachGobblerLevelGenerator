@@ -331,6 +331,7 @@ function kill(render, engine) {
 }
 
 // calculates variance
+// used for scoring the difficulty of levels
 function variance(nums) {
     let mean = 0,
         numerator = 0;
