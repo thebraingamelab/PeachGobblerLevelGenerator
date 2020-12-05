@@ -330,6 +330,15 @@ function kill(render, engine) {
     gen();
 }
 
+function getAllCollisions(fruits, geometry) {
+    let colliders = [];
+    for (fruit in fruits) {
+        colliders += geometry.filter(shape => Matter.SAT.collides(fruit, shape).collided);
+    }
+    // gets rid of duplicates
+    return [...new Set(colliders)];
+}
+
 // calculates variance
 // used for scoring the difficulty of levels
 function variance(nums) {
