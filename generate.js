@@ -330,6 +330,8 @@ function kill(render, engine) {
     gen();
 }
 
+// for a given set of fruits, find all objects that collide with them
+// used at the end for more complex level generation
 function getAllCollisions(fruits, geometry) {
     let colliders = [];
     for (fruit in fruits) {
