@@ -118,12 +118,11 @@ function gen() {
 
             center = [NaN, NaN];
 
-            // NOTE - all rotations are around the center
+            // NOTE - all rotations are around the center of Matter object
 
             switch (randshape) {
 
                 // 0 for square
-
                 case 0:
                     let side = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
