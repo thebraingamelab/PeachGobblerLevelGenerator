@@ -204,7 +204,6 @@ function gen() {
                     // find center of shape and add it to shape_centers
                     center[0] = randX + width / 2;
                     center[1] = randY + height / 2;
-                    break;
             }
 
             // use this to determine if a shape should be placed
