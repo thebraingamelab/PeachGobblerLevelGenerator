@@ -91,7 +91,7 @@ function gen() {
 
 
 
-    // begin level generation
+    // begin level generation section
 
     // generates random number of shapes between 3 and 10
     rand = Math.ceil(Math.random() * 7) + 2;
