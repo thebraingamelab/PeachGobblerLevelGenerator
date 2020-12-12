@@ -77,9 +77,6 @@ function gen(counter = 0) {
     fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
     fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR - BALL_RADIUS / 5, BALL_RADIUS);
 
-    // sets timer for 5 seconds that kills the level and generates a new one after 8 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine, 4, fruit); }, 8000);
-
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
     }
@@ -97,6 +94,10 @@ function gen(counter = 0) {
     // run the engine
     Engine.run(engine);
 
+    // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
+    time = setTimeout(function () { kill(render, engine, 4, fruit); console.log("hi"); }, 8000);
+
+
     // run the renderer
     Render.run(render);
 
@@ -109,7 +110,6 @@ function gen(counter = 0) {
         // level is considered not beatable if fruit does not move
         if (bodyA === ground || bodyB === ground) {
             if (fruit[0].position.x == SCREEN_WIDTH / 2) {
-                clearTimeout(time);
                 kill(render, engine);
             }
         }
@@ -130,14 +130,12 @@ function gen(counter = 0) {
                 win = hits >= fruit.length;
 
                 if (win) {
-                    clearTimeout(time);
                     kill(render, engine);
                 }
             }
 
             if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
                 win = false;
-                clearTimeout(time);
                 kill(render, engine);
             }
         }
@@ -311,6 +309,7 @@ function place_shape(point, shape_centers) {
 
 // stops render and engine and makes it ready to restart
 function kill(render, engine, counter = 0, fruits = null) {
+    clearTimeout(time);
     console.log("Score: " + score());
 
     Matter.Render.stop(render);
