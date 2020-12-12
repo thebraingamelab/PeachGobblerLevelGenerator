@@ -40,7 +40,7 @@ let engine,
     genshapes,
     encodedShapes;
 
-function gen() {
+function gen(counter = 0) {
     // create an engine
     engine = Engine.create();
 
@@ -56,9 +56,6 @@ function gen() {
     });
 
     engine.world.gravity.y = SIZE_FACTOR;
-
-    // sets timer for 5 seconds that kills the level and generates a new one after 8 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine); }, 8000);
 
     // create all physical game objects
     shapes = [];
@@ -80,17 +77,74 @@ function gen() {
     fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
     fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR - BALL_RADIUS / 5, BALL_RADIUS);
 
+    // sets timer for 5 seconds that kills the level and generates a new one after 8 seconds of inactivity
+    time = setTimeout(function () { kill(render, engine, 4, fruit); }, 8000);
+
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
     }
 
     shapes = [ground, border0, border1].concat(fruit);
 
+    if (counter == 0) {
+        make_geometry();
+    }
+    shapes = shapes.concat(genshapes);
 
+    // add all of the bodies to the world
+    World.add(engine.world, shapes);
 
+    // run the engine
+    Engine.run(engine);
 
+    // run the renderer
+    Render.run(render);
 
+    // deals with invalid levels
+    Events.on(engine, 'collisionStart', function (event) {
+        let pairs = event.pairs;
+        let bodyA = pairs[0].bodyA;
+        let bodyB = pairs[0].bodyB;
 
+        // level is considered not beatable if fruit does not move
+        if (bodyA === ground || bodyB === ground) {
+            if (fruit[0].position.x == SCREEN_WIDTH / 2) {
+                clearTimeout(time);
+                kill(render, engine);
+            }
+        }
+    });
+
+    // deals with detecting collisions on walls or multiple on floor
+    Events.on(engine, 'collisionActive', function (event) {
+        let pairs = event.pairs;
+        let bodyA = pairs[0].bodyA;
+        let bodyB = pairs[0].bodyB;
+
+        for (let i = 0; i < fruit.length; i++) {
+            if ((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
+                xposs[i] = fruit[i].position.x;
+                // teleports fruits off screen to avoid extra collisions
+                fruit[i].position.y = SCREEN_HEIGHT + 1000;
+                hits++;
+                win = hits >= fruit.length;
+
+                if (win) {
+                    clearTimeout(time);
+                    kill(render, engine);
+                }
+            }
+
+            if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
+                win = false;
+                clearTimeout(time);
+                kill(render, engine);
+            }
+        }
+    });
+}
+
+function make_geometry() {
     // begin level generation section
 
     // generates random number of shapes between 3 and 10
@@ -227,60 +281,6 @@ function gen() {
         };
         encodedShapes[i] = encodeShape;
     }
-
-    shapes = shapes.concat(genshapes);
-
-    // add all of the bodies to the world
-    World.add(engine.world, shapes);
-
-    // run the engine
-    Engine.run(engine);
-
-    // run the renderer
-    Render.run(render);
-
-    // deals with invalid levels
-    Events.on(engine, 'collisionStart', function (event) {
-        let pairs = event.pairs;
-        let bodyA = pairs[0].bodyA;
-        let bodyB = pairs[0].bodyB;
-
-        // level is considered not beatable if fruit does not move
-        if (bodyA === ground || bodyB === ground) {
-            if (fruit[0].position.x == SCREEN_WIDTH / 2) {
-                clearTimeout(time);
-                kill(render, engine);
-            }
-        }
-    });
-
-    // deals with detecting collisions on walls or multiple on floor
-    Events.on(engine, 'collisionActive', function (event) {
-        let pairs = event.pairs;
-        let bodyA = pairs[0].bodyA;
-        let bodyB = pairs[0].bodyB;
-
-        for (let i = 0; i < fruit.length; i++) {
-            if ((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
-                xposs[i] = fruit[i].position.x;
-                // teleports fruits off screen to avoid extra collisions
-                fruit[i].position.y = SCREEN_HEIGHT + 1000;
-                hits++;
-                win = hits >= fruit.length;
-
-                if (win) {
-                    clearTimeout(time);
-                    kill(render, engine);
-                }
-            }
-
-            if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-                win = false;
-                clearTimeout(time);
-                kill(render, engine);
-            }
-        }
-    });
 }
 
 // O(n) function to find closest shape center to point
@@ -310,7 +310,7 @@ function place_shape(point, shape_centers) {
 }
 
 // stops render and engine and makes it ready to restart
-function kill(render, engine) {
+function kill(render, engine, counter = 0, fruits = null) {
     console.log("Score: " + score());
 
     Matter.Render.stop(render);
@@ -325,18 +325,29 @@ function kill(render, engine) {
     total++;
 
     console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable / total + "%)");
-    gen();
+    if (counter != 0) {
+        removeOne(fruits, counter);
+    }
+    else {
+        gen();
+    }
 }
 
 // for a given set of fruits, find all objects that collide with them
 // used at the end for more complex level generation
-function getAllCollisions(fruits, geometry) {
+function removeOne(fruits, counter) {
     let colliders = [];
-    for (fruit in fruits) {
-        colliders += geometry.filter(shape => Matter.SAT.collides(fruit, shape).collided);
+    for (let i = 0; i < fruits.length; i++) {
+        let x = genshapes.filter(shape => Matter.SAT.collides(fruits[i], shape).collided);
+        colliders = colliders.concat(x);
     }
-    // gets rid of duplicates
-    return [...new Set(colliders)];
+    if (colliders.length == 0 || genshapes.length == 3) {
+        gen();
+    }
+    let i = genshapes.indexOf(colliders[parseInt(Math.random() * colliders.length)]);
+    genshapes.splice(i, 1);
+    encodedShapes.splice(i, 1);
+    gen(counter);
 }
 
 // calculates variance
