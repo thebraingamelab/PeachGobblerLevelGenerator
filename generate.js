@@ -142,6 +142,7 @@ function gen(counter = 0) {
     });
 }
 
+// sets the global variables with the level geometry
 function make_geometry() {
     // begin level generation section
 
