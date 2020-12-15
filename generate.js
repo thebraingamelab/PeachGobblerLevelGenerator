@@ -40,6 +40,7 @@ const SCREEN_HEIGHT = 960;
 const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 const BALL_RADIUS = SCREEN_WIDTH / 20;
 
+// most important function
 function gen(counter = 0) {
     // create an engine
     engine = Engine.create();
