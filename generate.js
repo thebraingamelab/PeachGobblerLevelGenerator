@@ -63,7 +63,9 @@ function gen(counter = 0) {
     shapes = [];
 
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
+    border0.restitution = 0.5;
+    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { restitution: 0.5, isStatic: true });
+    border1.restitution = 0.5;
 
     ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
     ground.collisionFilter.mask = -1;
@@ -98,7 +100,7 @@ function gen(counter = 0) {
     Engine.run(engine);
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine, 4, fruit); console.log("hi"); }, 8000);
+    time = setTimeout(function () { kill(render, engine, 4, fruit); }, 8000);
 
 
     // run the renderer
@@ -137,10 +139,9 @@ function gen(counter = 0) {
                 }
             }
 
-            if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-                win = false;
-                kill(render, engine);
-            }
+            // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
+            //     console.log(Math.max(bodyA.restitution, bodyB.restitution));
+            // }
         }
     });
 }
@@ -161,7 +162,7 @@ function make_geometry() {
 
         let randX, randY, shape, rot, prop, center, randshape;
         let contin = false;
-        let bounce = Math.floor(Math.random() * 3) / 2;
+        let material = Math.floor(Math.random() * 3);
 
         while (!contin) {
             randshape = Math.floor(Math.random() * 10);
@@ -272,19 +273,22 @@ function make_geometry() {
         shape_centers.push(center);
 
         shape.collisionFilter.mask = -1;
-        shape.friction = 0.025;
-        shape.restitution = bounce;
+        shape.friction = 0.05;
 
-        switch (bounce) {
+        switch (material) {
+            // normal
             case 0:
-                shape.render.fillStyle = 'red';
-                break;
-            case 0.5:
                 shape.render.fillStyle = 'green';
                 break;
+            // icey
             case 1:
+                shape.friction = 0;
                 shape.render.fillStyle = 'blue';
                 break;
+            // bouncey
+            case 2:
+                shape.restitution = 1;
+                shape.render.fillStyle = 'red';
         }
 
         Body.rotate(shape, rot);
@@ -296,7 +300,7 @@ function make_geometry() {
             shapeType: randshape,
             rotation: rot,
             properties: prop,
-            bounce: bounce
+            material: material
         };
         encodedShapes[i] = encodeShape;
     }
