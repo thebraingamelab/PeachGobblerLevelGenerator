@@ -51,7 +51,8 @@ function gen(counter = 0) {
         canvas: canv,
         options: {
             width: SCREEN_WIDTH,
-            height: SCREEN_HEIGHT
+            height: SCREEN_HEIGHT,
+            wireframes: false
         },
         engine: engine
     });
@@ -80,6 +81,7 @@ function gen(counter = 0) {
 
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
+        fruit[i].restitution = 0;
     }
 
     shapes = [ground, border0, border1].concat(fruit);
@@ -159,6 +161,7 @@ function make_geometry() {
 
         let randX, randY, shape, rot, prop, center, randshape;
         let contin = false;
+        let bounce = Math.floor(Math.random() * 3) / 2;
 
         while (!contin) {
             randshape = Math.floor(Math.random() * 10);
@@ -249,7 +252,9 @@ function make_geometry() {
                         width: width,
                         height: height
                     };
-                    shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
+                    shape = Bodies.rectangle(randX, randY, width, height, {
+                        isStatic: true
+                    });
                     // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
                     // multiply decimals and pi to make rough radian amounts
                     // 50% chance of positive or negative rotation
@@ -268,6 +273,19 @@ function make_geometry() {
 
         shape.collisionFilter.mask = -1;
         shape.friction = 0.025;
+        shape.restitution = bounce;
+
+        switch (bounce) {
+            case 0:
+                shape.render.fillStyle = 'red';
+                break;
+            case 0.5:
+                shape.render.fillStyle = 'green';
+                break;
+            case 1:
+                shape.render.fillStyle = 'blue';
+                break;
+        }
 
         Body.rotate(shape, rot);
         genshapes[i] = shape;
@@ -277,7 +295,8 @@ function make_geometry() {
             ypos: randY,
             shapeType: randshape,
             rotation: rot,
-            properties: prop
+            properties: prop,
+            bounce: bounce
         };
         encodedShapes[i] = encodeShape;
     }
@@ -314,9 +333,9 @@ function kill(render, engine, counter = 0, fruits = null) {
     clearTimeout(time);
     console.log("Score: " + score());
 
-    Matter.Render.stop(render);
-    Matter.World.clear(engine.world);
-    Matter.Engine.clear(engine);
+    Render.stop(render);
+    World.clear(engine.world);
+    Engine.clear(engine);
 
     render.canvas.remove();
     render.canvas = null;
