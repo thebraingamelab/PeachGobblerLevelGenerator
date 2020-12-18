@@ -86,6 +86,8 @@ function gen(counter = 0) {
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
         fruit[i].restitution = 0;
+        fruit[i].render.strokeStyle = 'white';
+        fruit[i].render.lineWidth = 3;
     }
 
     shapes = [ground, border0, border1].concat(fruit);
