@@ -140,7 +140,8 @@ function gen(counter = 0) {
             }
 
             // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-            //     console.log(Math.max(bodyA.restitution, bodyB.restitution));
+            //     win = false;
+            //     kill(render, engine);
             // }
         }
     });
