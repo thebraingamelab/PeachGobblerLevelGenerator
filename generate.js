@@ -9,6 +9,16 @@ let Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
+
+// modified so it works with config dimensions from Peach Gobbler player
+const SCREEN_WIDTH = 540;
+const SCREEN_HEIGHT = 960;
+
+// Magic number alert
+// 640000 is the width * height used during initial development
+const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
+const BALL_RADIUS = SCREEN_WIDTH / 20;
+
 // global variables
 let canv = canvas;
 let beatable = 0;
@@ -30,15 +40,6 @@ let engine,
     rand,
     genshapes,
     encodedShapes;
-
-// modified so it works with config dimensions from Peach Gobbler player
-const SCREEN_WIDTH = 540;
-const SCREEN_HEIGHT = 960;
-
-// Magic number alert
-// 640000 is the width * height used during initial development
-const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
-const BALL_RADIUS = SCREEN_WIDTH / 20;
 
 // most important function
 function gen(counter = 0) {
