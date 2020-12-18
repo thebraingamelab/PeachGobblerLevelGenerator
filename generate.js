@@ -162,7 +162,7 @@ function make_geometry() {
 
         let randX, randY, shape, rot, prop, center, randshape;
         let contin = false;
-        let bounce = Math.floor(Math.random() * 3) / 2;
+        let material = Math.floor(Math.random() * 3);
 
         while (!contin) {
             randshape = Math.floor(Math.random() * 10);
@@ -273,19 +273,22 @@ function make_geometry() {
         shape_centers.push(center);
 
         shape.collisionFilter.mask = -1;
-        shape.friction = 0.025;
-        shape.restitution = bounce;
+        shape.friction = 0.05;
 
-        switch (bounce) {
+        switch (material) {
+            // normal
             case 0:
-                shape.render.fillStyle = 'red';
-                break;
-            case 0.5:
                 shape.render.fillStyle = 'green';
                 break;
+            // icey
             case 1:
+                shape.friction = 0;
                 shape.render.fillStyle = 'blue';
                 break;
+            // bouncey
+            case 2:
+                shape.restitution = 1;
+                shape.render.fillStyle = 'red';
         }
 
         Body.rotate(shape, rot);
@@ -297,7 +300,7 @@ function make_geometry() {
             shapeType: randshape,
             rotation: rot,
             properties: prop,
-            bounce: bounce
+            material: material
         };
         encodedShapes[i] = encodeShape;
     }
