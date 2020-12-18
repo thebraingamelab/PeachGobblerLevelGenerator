@@ -62,6 +62,8 @@ function gen(counter = 0) {
     // create all physical game objects
     shapes = [];
 
+    // I have no clue why, but setting the restitution as an option during the initial set stage does not work.
+    // need to set restitution property after initialization
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
     border0.restitution = 0.5;
     border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { restitution: 0.5, isStatic: true });
