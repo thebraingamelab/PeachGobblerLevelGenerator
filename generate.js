@@ -63,7 +63,9 @@ function gen(counter = 0) {
     shapes = [];
 
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
+    border0.restitution = 0.5;
+    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { restitution: 0.5, isStatic: true });
+    border1.restitution = 0.5;
 
     ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
     ground.collisionFilter.mask = -1;
@@ -138,8 +140,7 @@ function gen(counter = 0) {
             }
 
             if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-                win = false;
-                kill(render, engine);
+                console.log(Math.max(bodyA.restitution, bodyB.restitution));
             }
         }
     });
