@@ -100,7 +100,7 @@ function gen(counter = 0) {
     Engine.run(engine);
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine, 4, fruit); console.log("hi"); }, 8000);
+    time = setTimeout(function () { kill(render, engine, 4, fruit); }, 8000);
 
 
     // run the renderer
@@ -139,9 +139,9 @@ function gen(counter = 0) {
                 }
             }
 
-            if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-                console.log(Math.max(bodyA.restitution, bodyB.restitution));
-            }
+            // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
+            //     console.log(Math.max(bodyA.restitution, bodyB.restitution));
+            // }
         }
     });
 }
