@@ -10,7 +10,7 @@ let Engine = Matter.Engine,
     Events = Matter.Events;
 
 
-// modified so it works with config dimensions from Peach Gobbler player
+// modified so it works with dimensions from Peach Gobbler player's config file
 const SCREEN_WIDTH = 540;
 const SCREEN_HEIGHT = 960;
 
