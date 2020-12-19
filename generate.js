@@ -43,6 +43,7 @@ const BALL_RADIUS = SCREEN_WIDTH / 20;
 
 rule = makeRules();
 console.log(rule);
+console.log("0 is normal, 1 is bouncey, 2 is icey");
 
 // most important function
 function gen(counter = 0) {
@@ -304,7 +305,8 @@ function make_geometry() {
             shapeType: randshape,
             rotation: rot,
             properties: prop,
-            color: color
+            color: color,
+            line_color: line_color
         };
         encodedShapes[i] = encodeShape;
 
@@ -312,20 +314,48 @@ function make_geometry() {
     encodedShapes.forEach((eShape, i) => applyRules(eShape, i));
 }
 
+function shapeCodesToShape(shapeType) {
+    switch (shapeType) {
+        case 0:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            return "rectangle";
+        case 1:
+            return "circle";
+        default:
+            return "triangle";
+    }
+}
+
 function applyRules(eShape, i) {
-    let color = eShape.color;
-    let stringColor = colorCodes[color];
-    let ruleColorCode = rule[1][stringColor];
-    changeProperties(ruleColorCode, genshapes[i]);
+    let input;
+
+    switch (rule[0]) {
+        case "colors":
+            input = colorCodes[eShape.color];
+            break;
+        case "line_colors":
+            input = colorCodes[eShape.line_color];
+            break;
+        case "shape":
+            input = shapeCodesToShape(eShape.shapeType);
+
+    }
+
+    changeProperties(rule[1][input], genshapes[i]);
 }
 
 function changeProperties(code, shape) {
     switch (code) {
         case 1:
-            shape.restitution = 0;
+            shape.restitution = 1;
             break;
         case 2:
-            shape.friction = 1
+            shape.friction = 0;
     }
 }
 
