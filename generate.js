@@ -41,6 +41,9 @@ const SCREEN_HEIGHT = 960;
 const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 const BALL_RADIUS = SCREEN_WIDTH / 20;
 
+rule = makeRules();
+console.log(rule);
+
 // most important function
 function gen(counter = 0) {
     // create an engine
@@ -306,16 +309,10 @@ function make_geometry() {
         encodedShapes[i] = encodeShape;
 
     }
-    rules();
+    encodedShapes.forEach((eShape, i) => applyRules(eShape, i));
 }
 
-function rules() {
-    rule = makeRules();
-    console.log(rule);
-    encodedShapes.forEach((eShape, i) => applyRulesHelper(eShape, i));
-}
-
-function applyRulesHelper(eShape, i) {
+function applyRules(eShape, i) {
     let color = eShape.color;
     let stringColor = colorCodes[color];
     let ruleColorCode = rule[1][stringColor];
