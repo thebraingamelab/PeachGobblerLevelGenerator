@@ -347,10 +347,10 @@ function applyRules(eShape, i) {
 
     }
 
-    changeProperties(rule[1][input], genshapes[i]);
+    setProperties(rule[1][input], genshapes[i]);
 }
 
-function changeProperties(code, shape) {
+function setProperties(code, shape) {
     switch (code) {
         case 1:
             shape.restitution = 1;
