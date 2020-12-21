@@ -178,8 +178,8 @@ function make_geometry() {
 
         let randX, randY, shape, rot, prop, center, randshape;
         let contin = false;
-        let color = Math.floor(Math.random() * 3);
-        let line_color = Math.floor(Math.random() * 3);
+        let color = colorCodes[Math.floor(Math.random() * 3)];
+        let line_color = colorCodes[Math.floor(Math.random() * 3)];
 
         while (!contin) {
             randshape = Math.floor(Math.random() * 10);
@@ -293,8 +293,8 @@ function make_geometry() {
         shape.friction = 0.05;
         shape.render.lineWidth = 10;
 
-        shape.render.fillStyle = colorCodes[color];
-        shape.render.strokeStyle = colorCodes[line_color];
+        shape.render.fillStyle = color;
+        shape.render.strokeStyle = line_color;
 
         Body.rotate(shape, rot);
         genshapes[i] = shape;
@@ -336,10 +336,10 @@ function applyRules(eShape, i) {
 
     switch (rule[0]) {
         case "colors":
-            input = colorCodes[eShape.color];
+            input = eShape.color;
             break;
         case "line_colors":
-            input = colorCodes[eShape.line_color];
+            input = eShape.line_color;
             break;
         case "shape":
             input = shapeCodesToShape(eShape.shapeType);
