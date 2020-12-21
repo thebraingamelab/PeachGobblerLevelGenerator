@@ -29,7 +29,8 @@ let engine,
     fruit,
     rand,
     genshapes,
-    encodedShapes;
+    encodedShapes,
+    rule;
 
 // modified so it works with config dimensions from Peach Gobbler player
 const SCREEN_WIDTH = 540;
@@ -39,6 +40,10 @@ const SCREEN_HEIGHT = 960;
 // 640000 is the width * height used during initial development
 const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 const BALL_RADIUS = SCREEN_WIDTH / 20;
+
+rule = makeRules();
+console.log(rule);
+console.log("0 is normal, 1 is bouncey, 2 is icey");
 
 // most important function
 function gen(counter = 0) {
@@ -151,6 +156,12 @@ function gen(counter = 0) {
     });
 }
 
+const colorCodes = {
+    0: 'green',
+    1: 'blue',
+    2: 'red'
+}
+
 // sets the global variables with the level geometry
 function make_geometry() {
     // begin level generation section
@@ -167,7 +178,8 @@ function make_geometry() {
 
         let randX, randY, shape, rot, prop, center, randshape;
         let contin = false;
-        let material = Math.floor(Math.random() * 3);
+        let color = colorCodes[Math.floor(Math.random() * 3)];
+        let line_color = colorCodes[Math.floor(Math.random() * 3)];
 
         while (!contin) {
             randshape = Math.floor(Math.random() * 10);
@@ -279,22 +291,10 @@ function make_geometry() {
 
         shape.collisionFilter.mask = -1;
         shape.friction = 0.05;
+        shape.render.lineWidth = 10;
 
-        switch (material) {
-            // normal
-            case 0:
-                shape.render.fillStyle = 'green';
-                break;
-            // icey
-            case 1:
-                shape.friction = 0;
-                shape.render.fillStyle = 'blue';
-                break;
-            // bouncey
-            case 2:
-                shape.restitution = 1;
-                shape.render.fillStyle = 'red';
-        }
+        shape.render.fillStyle = color;
+        shape.render.strokeStyle = line_color;
 
         Body.rotate(shape, rot);
         genshapes[i] = shape;
@@ -305,11 +305,60 @@ function make_geometry() {
             shapeType: randshape,
             rotation: rot,
             properties: prop,
-            material: material
+            color: color,
+            line_color: line_color
         };
         encodedShapes[i] = encodeShape;
+
+    }
+    encodedShapes.forEach((eShape, i) => applyRules(eShape, i));
+}
+
+function shapeCodesToShape(shapeType) {
+    switch (shapeType) {
+        case 0:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            return "rectangle";
+        case 1:
+            return "circle";
+        default:
+            return "triangle";
     }
 }
+
+function applyRules(eShape, i) {
+    let input;
+
+    switch (rule[0]) {
+        case "colors":
+            input = eShape.color;
+            break;
+        case "line_colors":
+            input = eShape.line_color;
+            break;
+        case "shape":
+            input = shapeCodesToShape(eShape.shapeType);
+
+    }
+
+    changeProperties(rule[1][input], genshapes[i]);
+}
+
+function changeProperties(code, shape) {
+    switch (code) {
+        case 1:
+            shape.restitution = 1;
+            break;
+        case 2:
+            shape.friction = 0;
+    }
+}
+
 
 // O(n) function to find closest shape center to point
 function find_closest_distance(point, shape_centers) {
@@ -416,7 +465,8 @@ function score() {
 function saveGameplayData(sco, geo) {
     db.collection("PGLevels").add({
         score: sco,
-        geometry: geo
+        geometry: geo,
+        rule: rule
     })
         .then(function (docRef) {
             console.log("Document written with ID: ", docRef.id);
