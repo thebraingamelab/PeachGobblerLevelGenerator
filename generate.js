@@ -393,7 +393,7 @@ function place_shape(point, shape_centers) {
 // stops render and engine and makes it ready to restart
 function kill(render, engine, counter = 0, fruits = null) {
     clearTimeout(time);
-    console.log("Score: ", score());
+    console.log("Score:", score());
 
     Render.stop(render);
     World.clear(engine.world);
