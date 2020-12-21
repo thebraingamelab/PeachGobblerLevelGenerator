@@ -315,6 +315,7 @@ function make_geometry() {
     encodedShapes.forEach((eShape, i) => applyRules(eShape, i));
 }
 
+// function for turning 5 different shape ids into 3 named shapes
 function shapeCodesToShape(shapeType) {
     switch (shapeType) {
         case 0:
@@ -332,6 +333,7 @@ function shapeCodesToShape(shapeType) {
     }
 }
 
+// get shape info and convert it to material type based on rules
 function applyRules(eShape, i) {
     let input;
 
@@ -350,6 +352,7 @@ function applyRules(eShape, i) {
     setProperties(rule[1][input], genshapes[i]);
 }
 
+// set the shapes to selected material
 function setProperties(code, shape) {
     switch (code) {
         case 1:
