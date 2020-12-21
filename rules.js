@@ -1,5 +1,5 @@
 const values = {
-    "colors": ['red', 'green', 'blue'],
+    "fill_colors": ['red', 'green', 'blue'],
     "line_colors": ['red', 'green', 'blue'],
     "shape": ['triangle', 'rectangle', 'circle']
 };

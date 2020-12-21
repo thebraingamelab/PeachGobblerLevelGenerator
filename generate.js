@@ -41,9 +41,10 @@ const SCREEN_HEIGHT = 960;
 const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 const BALL_RADIUS = SCREEN_WIDTH / 20;
 
+// for debugging purposes only
 rule = makeRules();
-console.log(rule);
-console.log("0 is normal, 1 is bouncey, 2 is icey");
+let swappedRule = swap(rule[1]);
+console.log(`Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
 
 // most important function
 function gen(counter = 0) {
@@ -335,7 +336,7 @@ function applyRules(eShape, i) {
     let input;
 
     switch (rule[0]) {
-        case "colors":
+        case "fill_colors":
             input = eShape.color;
             break;
         case "line_colors":
@@ -474,6 +475,16 @@ function saveGameplayData(sco, geo) {
         .catch(function (error) {
             console.error("Error adding document: ", error);
         });
+}
+
+// swaps key with value in dictionary
+// for debugging purposes only
+function swap(json) {
+    var ret = {};
+    for (var key in json) {
+        ret[json[key]] = key;
+    }
+    return ret;
 }
 
 gen();
