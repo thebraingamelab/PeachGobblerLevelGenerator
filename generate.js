@@ -406,7 +406,7 @@ function kill(render, engine, counter = 0, fruits = null) {
 
     total++;
 
-    console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable / total + "%)");
+    console.log(`Ratio: ${beatable} : ${total} (${100 * beatable / total}%)`);
     if (counter != 0) {
         removeOne(fruits, counter);
     }
