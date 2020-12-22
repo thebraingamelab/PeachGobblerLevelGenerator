@@ -464,6 +464,15 @@ function score() {
     return vari;
 }
 
+// swaps key with value in dictionary
+// for debugging purposes only
+function swap(json) {
+    var ret = {};
+    for (var key in json) {
+        ret[json[key]] = key;
+    }
+    return ret;
+}
 
 // Uploads data to cloud firestore
 function saveGameplayData(sco, geo) {
@@ -478,16 +487,6 @@ function saveGameplayData(sco, geo) {
         .catch(function (error) {
             console.error("Error adding document: ", error);
         });
-}
-
-// swaps key with value in dictionary
-// for debugging purposes only
-function swap(json) {
-    var ret = {};
-    for (var key in json) {
-        ret[json[key]] = key;
-    }
-    return ret;
 }
 
 gen();
