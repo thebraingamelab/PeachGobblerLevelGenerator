@@ -369,7 +369,7 @@ function variance(nums) {
 }
 
 // Scoring algorithm
-// Uses variance to calculate scoring
+// Uses variance formula as proxy
 function score() {
     // returns -1 if not beatable
     if (!win) {
