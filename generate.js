@@ -1,6 +1,8 @@
 // uncomment this before deploying
 //const db = firebase.firestore();
 
+const RULE_DEBUG_MODE = false;
+
 // module aliases
 let Engine = Matter.Engine,
     Render = Matter.Render,
@@ -41,10 +43,14 @@ const SCREEN_HEIGHT = 960;
 const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 const BALL_RADIUS = SCREEN_WIDTH / 20;
 
-// for debugging purposes only
-rule = makeRules();
-let swappedRule = swap(rule[1]);
-console.log(`Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
+if (RULE_DEBUG_MODE) ruleCall();
+
+function ruleCall() {
+    rule = makeRules();
+    // for debugging purposes only
+    let swappedRule = swap(rule[1]);
+    console.log(`Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
+}
 
 // most important function
 function gen(counter = 0) {
@@ -99,6 +105,7 @@ function gen(counter = 0) {
     shapes = [ground, border0, border1].concat(fruit);
 
     if (counter == 0) {
+        if (!RULE_DEBUG_MODE) ruleCall();
         make_geometry();
     }
     shapes = shapes.concat(genshapes);
@@ -459,7 +466,7 @@ function score() {
     let vari = variance(xposs);
 
     // uncomment this before deploying
-    //saveGameplayData(vari, JSON.stringify(encodedShapes));
+    //saveGameplayData(vari, JSON.stringify(encodedShapes), rule[0], JSON.stringify(rule[1]);
 
     return vari;
 }
@@ -475,11 +482,12 @@ function swap(json) {
 }
 
 // Uploads data to cloud firestore
-function saveGameplayData(sco, geo) {
+function saveGameplayData(sco, geo, ruleType, ruleString) {
     db.collection("PGLevels").add({
         score: sco,
         geometry: geo,
-        rule: rule
+        rule_type: ruleType,
+        rule: ruleString
     })
         .then(function (docRef) {
             console.log("Document written with ID: ", docRef.id);
