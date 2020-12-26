@@ -202,7 +202,6 @@ function make_geometry() {
             center = [NaN, NaN];
 
             // NOTE - all rotations are around the center of Matter object
-
             switch (randshape) {
 
                 // 0 for square
