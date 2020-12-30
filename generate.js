@@ -11,6 +11,16 @@ let Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
+
+// modified so it works with dimensions from Peach Gobbler player's config file
+const SCREEN_WIDTH = 540;
+const SCREEN_HEIGHT = 960;
+
+// Magic number alert
+// 640000 is the width * height used during initial development
+const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
+const BALL_RADIUS = SCREEN_WIDTH / 20;
+
 // global variables
 let canv = canvas;
 let beatable = 0;
@@ -33,15 +43,6 @@ let engine,
     genshapes,
     encodedShapes,
     rule;
-
-// modified so it works with config dimensions from Peach Gobbler player
-const SCREEN_WIDTH = 540;
-const SCREEN_HEIGHT = 960;
-
-// Magic number alert
-// 640000 is the width * height used during initial development
-const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
-const BALL_RADIUS = SCREEN_WIDTH / 20;
 
 if (RULE_DEBUG_MODE) ruleCall();
 
@@ -455,7 +456,7 @@ function variance(nums) {
 }
 
 // Scoring algorithm
-// Uses variance to calculate scoring
+// Uses variance formula as proxy
 function score() {
     // returns -1 if not beatable
     if (!win) {
