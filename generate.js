@@ -1,6 +1,8 @@
 // uncomment this before deploying
 //const db = firebase.firestore();
 
+const RULE_DEBUG_MODE = false;
+
 // module aliases
 let Engine = Matter.Engine,
     Render = Matter.Render,
@@ -39,7 +41,17 @@ let engine,
     fruit,
     rand,
     genshapes,
-    encodedShapes;
+    encodedShapes,
+    rule;
+
+if (RULE_DEBUG_MODE) ruleCall();
+
+function ruleCall() {
+    rule = makeRules();
+    // for debugging purposes only
+    let swappedRule = swap(rule[1]);
+    console.log(`Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
+}
 
 // most important function
 function gen(counter = 0) {
@@ -52,7 +64,8 @@ function gen(counter = 0) {
         canvas: canv,
         options: {
             width: SCREEN_WIDTH,
-            height: SCREEN_HEIGHT
+            height: SCREEN_HEIGHT,
+            wireframes: false
         },
         engine: engine
     });
@@ -62,8 +75,12 @@ function gen(counter = 0) {
     // create all physical game objects
     shapes = [];
 
+    // I have no clue why, but setting the restitution as an option during the initial set stage does not work.
+    // need to set restitution property after initialization
     border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
+    border0.restitution = 0.5;
+    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { restitution: 0.5, isStatic: true });
+    border1.restitution = 0.5;
 
     ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
     ground.collisionFilter.mask = -1;
@@ -81,11 +98,15 @@ function gen(counter = 0) {
 
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
+        fruit[i].restitution = 0;
+        fruit[i].render.strokeStyle = 'white';
+        fruit[i].render.lineWidth = 3;
     }
 
     shapes = [ground, border0, border1].concat(fruit);
 
     if (counter == 0) {
+        if (!RULE_DEBUG_MODE) ruleCall();
         make_geometry();
     }
     shapes = shapes.concat(genshapes);
@@ -97,7 +118,7 @@ function gen(counter = 0) {
     Engine.run(engine);
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine, 4, fruit); console.log("hi"); }, 8000);
+    time = setTimeout(function () { kill(render, engine, 4, fruit); }, 8000);
 
 
     // run the renderer
@@ -136,12 +157,18 @@ function gen(counter = 0) {
                 }
             }
 
-            if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-                win = false;
-                kill(render, engine);
-            }
+            // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
+            //     win = false;
+            //     kill(render, engine);
+            // }
         }
     });
+}
+
+const colorCodes = {
+    0: 'green',
+    1: 'blue',
+    2: 'red'
 }
 
 // sets the global variables with the level geometry
@@ -160,6 +187,8 @@ function make_geometry() {
 
         let randX, randY, shape, rot, prop, center, randshape;
         let contin = false;
+        let color = colorCodes[Math.floor(Math.random() * 3)];
+        let line_color = colorCodes[Math.floor(Math.random() * 3)];
 
         while (!contin) {
             randshape = Math.floor(Math.random() * 10);
@@ -174,7 +203,6 @@ function make_geometry() {
             center = [NaN, NaN];
 
             // NOTE - all rotations are around the center of Matter object
-
             switch (randshape) {
 
                 // 0 for square
@@ -250,7 +278,9 @@ function make_geometry() {
                         width: width,
                         height: height
                     };
-                    shape = Bodies.rectangle(randX, randY, width, height, { isStatic: true });
+                    shape = Bodies.rectangle(randX, randY, width, height, {
+                        isStatic: true
+                    });
                     // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
                     // multiply decimals and pi to make rough radian amounts
                     // 50% chance of positive or negative rotation
@@ -268,7 +298,11 @@ function make_geometry() {
         shape_centers.push(center);
 
         shape.collisionFilter.mask = -1;
-        shape.friction = 0.025;
+        shape.friction = 0.05;
+        shape.render.lineWidth = 10;
+
+        shape.render.fillStyle = color;
+        shape.render.strokeStyle = line_color;
 
         Body.rotate(shape, rot);
         genshapes[i] = shape;
@@ -278,11 +312,64 @@ function make_geometry() {
             ypos: randY,
             shapeType: randshape,
             rotation: rot,
-            properties: prop
+            properties: prop,
+            color: color,
+            line_color: line_color
         };
         encodedShapes[i] = encodeShape;
+
+    }
+    encodedShapes.forEach((eShape, i) => applyRules(eShape, i));
+}
+
+// function for turning 5 different shape ids into 3 named shapes
+function shapeCodesToShape(shapeType) {
+    switch (shapeType) {
+        case 0:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            return "rectangle";
+        case 1:
+            return "circle";
+        default:
+            return "triangle";
     }
 }
+
+// get shape info and convert it to material type based on rules
+function applyRules(eShape, i) {
+    let input;
+
+    switch (rule[0]) {
+        case "fill_colors":
+            input = eShape.color;
+            break;
+        case "line_colors":
+            input = eShape.line_color;
+            break;
+        case "shape":
+            input = shapeCodesToShape(eShape.shapeType);
+
+    }
+
+    setProperties(rule[1][input], genshapes[i]);
+}
+
+// set the shapes to selected material
+function setProperties(code, shape) {
+    switch (code) {
+        case 1:
+            shape.restitution = 1;
+            break;
+        case 2:
+            shape.friction = 0;
+    }
+}
+
 
 // O(n) function to find closest shape center to point
 function find_closest_distance(point, shape_centers) {
@@ -313,11 +400,11 @@ function place_shape(point, shape_centers) {
 // stops render and engine and makes it ready to restart
 function kill(render, engine, counter = 0, fruits = null) {
     clearTimeout(time);
-    console.log("Score: " + score());
+    console.log("Score:", score());
 
-    Matter.Render.stop(render);
-    Matter.World.clear(engine.world);
-    Matter.Engine.clear(engine);
+    Render.stop(render);
+    World.clear(engine.world);
+    Engine.clear(engine);
 
     render.canvas.remove();
     render.canvas = null;
@@ -326,7 +413,7 @@ function kill(render, engine, counter = 0, fruits = null) {
 
     total++;
 
-    console.log("Ratio: " + beatable + " : " + total + " (" + 100 * beatable / total + "%)");
+    console.log(`Ratio: ${beatable} : ${total} (${100 * beatable / total}%)`);
     if (counter != 0) {
         removeOne(fruits, counter);
     }
@@ -379,17 +466,28 @@ function score() {
     let vari = variance(xposs);
 
     // uncomment this before deploying
-    //saveGameplayData(vari, JSON.stringify(encodedShapes));
+    //saveGameplayData(vari, JSON.stringify(encodedShapes), rule[0], JSON.stringify(rule[1]);
 
     return vari;
 }
 
+// swaps key with value in dictionary
+// for debugging purposes only
+function swap(json) {
+    var ret = {};
+    for (var key in json) {
+        ret[json[key]] = key;
+    }
+    return ret;
+}
 
 // Uploads data to cloud firestore
-function saveGameplayData(sco, geo) {
+function saveGameplayData(sco, geo, ruleType, ruleString) {
     db.collection("PGLevels").add({
         score: sco,
-        geometry: geo
+        geometry: geo,
+        rule_type: ruleType,
+        rule: ruleString
     })
         .then(function (docRef) {
             console.log("Document written with ID: ", docRef.id);
