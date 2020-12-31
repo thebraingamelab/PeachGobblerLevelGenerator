@@ -1,7 +1,7 @@
 // uncomment this before deploying
 //const db = firebase.firestore();
 
-const RULE_DEBUG_MODE = false;
+const RULE_DEBUG_MODE = true;
 
 // module aliases
 let Engine = Matter.Engine,
@@ -121,9 +121,8 @@ function gen(counter = 0) {
     Engine.run(engine);
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    let timeout = setTimeout(() => killLevel(xposs, false, 4, fruit), 8000);
+    let timeout = setTimeout(() => { resetTimeout(); killLevel(xposs, false, 4, fruit) }, 8000);
     const resetTimeout = () => clearTimeout(timeout);
-
 
     // run the renderer
     Render.run(render);
