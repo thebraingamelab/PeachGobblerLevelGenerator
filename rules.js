@@ -4,7 +4,7 @@ const values = {
     "shape": ['triangle', 'rectangle', 'circle']
 };
 
-function makeRules() {
+function makeRuleLogic() {
     let variable = randomElement(Object.entries(values));
     let randArray = shuffle([0, 1, 2]);
     let result = {};

@@ -11,6 +11,7 @@ let Engine = Matter.Engine,
     Body = Matter.Body,
     Events = Matter.Events;
 
+const canv = canvas;
 
 // modified so it works with dimensions from Peach Gobbler player's config file
 const SCREEN_WIDTH = 540;
@@ -21,33 +22,57 @@ const SCREEN_HEIGHT = 960;
 const SIZE_FACTOR = Math.sqrt(SCREEN_WIDTH * SCREEN_HEIGHT / 640000);
 const BALL_RADIUS = SCREEN_WIDTH / 20;
 
-// global variables
-let canv = canvas;
-let beatable = 0;
+// used to generate statistics
+let numBeatable = 0;
 let total = 0;
 let max = 0;
 
-// all variables from gen are global to allow for data replacement
+// for some reason, engine and render need be this high level or unexpected behaviors occur
 let engine,
     render,
-    time,
-    border0,
-    border1,
-    shapes,
-    ground,
-    hits,
-    win,
-    xposs,
-    fruit,
-    rand,
+
+    // these variables need to be easily accessable during subsequent runs of gen()
     genshapes,
     encodedShapes,
     rule;
 
-if (RULE_DEBUG_MODE) ruleCall();
 
-function ruleCall() {
-    rule = makeRules();
+// I have no clue why, but setting the restitution as an option during the initial set stage does not work.
+// need to set restitution property after initialization
+function createLevelBorder(x) {
+    let y = Bodies.rectangle(x, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
+    y.restitution = 0.5;
+    return y;
+}
+
+// constant level geometry
+const
+    border0 = createLevelBorder(0),
+    border1 = createLevelBorder(SCREEN_WIDTH),
+    ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
+ground.collisionFilter.mask = -1;
+
+// fruit construction
+function makeFruit() {
+    let fruit = [];
+    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR, BALL_RADIUS);
+    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2 + BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
+    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR + BALL_RADIUS / 5, BALL_RADIUS);
+    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
+    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR - BALL_RADIUS / 5, BALL_RADIUS);
+
+    for (let i = 0; i < fruit.length; i++) {
+        fruit[i].collisionFilter.group = -1;
+        fruit[i].restitution = 0;
+        fruit[i].render.strokeStyle = 'white';
+        fruit[i].render.lineWidth = 3;
+    }
+
+    return fruit
+}
+
+function makeRule() {
+    rule = makeRuleLogic();
     // for debugging purposes only
     let swappedRule = swap(rule[1]);
     console.log(`Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
@@ -75,38 +100,16 @@ function gen(counter = 0) {
     // create all physical game objects
     shapes = [];
 
-    // I have no clue why, but setting the restitution as an option during the initial set stage does not work.
-    // need to set restitution property after initialization
-    border0 = Bodies.rectangle(0, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
-    border0.restitution = 0.5;
-    border1 = Bodies.rectangle(SCREEN_WIDTH, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { restitution: 0.5, isStatic: true });
-    border1.restitution = 0.5;
+    let hits = 0;
+    let beatable = false;
+    let xposs = [];
 
-    ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
-    ground.collisionFilter.mask = -1;
-
-    hits = 0;
-    win = false;
-    xposs = [];
-
-    fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR, BALL_RADIUS);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2 + BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR + BALL_RADIUS / 5, BALL_RADIUS);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR - BALL_RADIUS / 5, BALL_RADIUS);
-
-    for (let i = 0; i < fruit.length; i++) {
-        fruit[i].collisionFilter.group = -1;
-        fruit[i].restitution = 0;
-        fruit[i].render.strokeStyle = 'white';
-        fruit[i].render.lineWidth = 3;
-    }
+    let fruit = makeFruit();
 
     shapes = [ground, border0, border1].concat(fruit);
 
     if (counter == 0) {
-        if (!RULE_DEBUG_MODE) ruleCall();
+        if (!RULE_DEBUG_MODE) makeRule();
         make_geometry();
     }
     shapes = shapes.concat(genshapes);
@@ -118,7 +121,8 @@ function gen(counter = 0) {
     Engine.run(engine);
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    time = setTimeout(function () { kill(render, engine, 4, fruit); }, 8000);
+    let timeout = setTimeout(function () { kill(xposs, false, 4, fruit); }, 8000);
+    const resetTimeout = () => clearTimeout(timeout);
 
 
     // run the renderer
@@ -133,7 +137,8 @@ function gen(counter = 0) {
         // level is considered not beatable if fruit does not move
         if (bodyA === ground || bodyB === ground) {
             if (fruit[0].position.x == SCREEN_WIDTH / 2) {
-                kill(render, engine);
+                resetTimeout();
+                kill(xposs, false);
             }
         }
     });
@@ -150,16 +155,18 @@ function gen(counter = 0) {
                 // teleports fruits off screen to avoid extra collisions
                 fruit[i].position.y = SCREEN_HEIGHT + 1000;
                 hits++;
-                win = hits >= fruit.length;
+                beatable = hits >= fruit.length;
 
-                if (win) {
-                    kill(render, engine);
+                if (beatable) {
+                    resetTimeout();
+                    kill(xposs, true);
                 }
             }
 
             // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
-            //     win = false;
-            //     kill(render, engine);
+            //     beatable = false;
+            //     resetTimeout();
+            //     kill(xposs, false);
             // }
         }
     });
@@ -176,7 +183,7 @@ function make_geometry() {
     // begin level generation section
 
     // generates random number of shapes between 3 and 10
-    rand = Math.ceil(Math.random() * 7) + 2;
+    let rand = Math.ceil(Math.random() * 7) + 2;
 
     genshapes = [];
     encodedShapes = [];
@@ -398,9 +405,8 @@ function place_shape(point, shape_centers) {
 }
 
 // stops render and engine and makes it ready to restart
-function kill(render, engine, counter = 0, fruits = null) {
-    clearTimeout(time);
-    console.log("Score:", score());
+function kill(xposs, beatable, counter = 0, fruits = null) {
+    console.log("Score:", beatable ? score(xposs) : -1);
 
     Render.stop(render);
     World.clear(engine.world);
@@ -413,7 +419,7 @@ function kill(render, engine, counter = 0, fruits = null) {
 
     total++;
 
-    console.log(`Ratio: ${beatable} : ${total} (${100 * beatable / total}%)`);
+    console.log(`Ratio: ${numBeatable} : ${total} (${100 * numBeatable / total}%)`);
     if (counter != 0) {
         removeOne(fruits, counter);
     }
@@ -457,12 +463,8 @@ function variance(nums) {
 
 // Scoring algorithm
 // Uses variance formula as proxy
-function score() {
-    // returns -1 if not beatable
-    if (!win) {
-        return -1;
-    }
-    beatable++;
+function score(xposs) {
+    numBeatable++;
     let vari = variance(xposs);
 
     // uncomment this before deploying
@@ -497,4 +499,5 @@ function saveGameplayData(sco, geo, ruleType, ruleString) {
         });
 }
 
+if (RULE_DEBUG_MODE) makeRule();
 gen();
