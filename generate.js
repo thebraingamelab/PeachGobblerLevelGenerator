@@ -121,7 +121,7 @@ function gen(counter = 0) {
     Engine.run(engine);
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    let timeout = setTimeout(function () { kill(xposs, false, 4, fruit); }, 8000);
+    let timeout = setTimeout(() => killLevel(xposs, false, 4, fruit), 8000);
     const resetTimeout = () => clearTimeout(timeout);
 
 
@@ -138,7 +138,7 @@ function gen(counter = 0) {
         if (bodyA === ground || bodyB === ground) {
             if (fruit[0].position.x == SCREEN_WIDTH / 2) {
                 resetTimeout();
-                kill(xposs, false);
+                killLevel(xposs, false);
             }
         }
     });
@@ -159,14 +159,14 @@ function gen(counter = 0) {
 
                 if (beatable) {
                     resetTimeout();
-                    kill(xposs, true);
+                    killLevel(xposs, true);
                 }
             }
 
             // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
             //     beatable = false;
             //     resetTimeout();
-            //     kill(xposs, false);
+            //     killLevel(xposs, false);
             // }
         }
     });
@@ -405,7 +405,7 @@ function place_shape(point, shape_centers) {
 }
 
 // stops render and engine and makes it ready to restart
-function kill(xposs, beatable, counter = 0, fruits = null) {
+function killLevel(xposs, beatable, counter = 0, fruits = null) {
     console.log("Score:", beatable ? score(xposs) : -1);
 
     Render.stop(render);
