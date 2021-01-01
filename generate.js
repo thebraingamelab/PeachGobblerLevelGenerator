@@ -162,6 +162,7 @@ function gen(counter = 0) {
                 }
             }
 
+            // code below adds a feature where levels are invalid if a fruit hits a wall
             // if (bodyA === border0 || bodyB === border0 || bodyA === border1 || bodyB === border1) {
             //     beatable = false;
             //     resetTimeout();
