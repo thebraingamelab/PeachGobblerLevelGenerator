@@ -151,6 +151,7 @@ function gen(counter = 0) {
         for (let i = 0; i < fruit.length; i++) {
             if ((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
                 xposs[i] = fruit[i].position.x;
+
                 // teleports fruits off screen to avoid extra collisions
                 fruit[i].position.y = SCREEN_HEIGHT + 1000;
                 hits++;
