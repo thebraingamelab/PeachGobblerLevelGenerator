@@ -153,6 +153,7 @@ function gen(counter = 0) {
                 xposs[i] = fruit[i].position.x;
 
                 // teleports fruits off screen to avoid extra collisions
+                // maybe replace with object deletion?
                 fruit[i].position.y = SCREEN_HEIGHT + 1000;
                 hits++;
                 beatable = hits >= fruit.length;
