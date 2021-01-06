@@ -142,7 +142,7 @@ function gen(counter = 0) {
         }
     });
 
-    // deals with detecting collisions on walls or multiple on floor
+    // deals with detecting collisions on floor
     Events.on(engine, 'collisionActive', function (event) {
         let pairs = event.pairs;
         let bodyA = pairs[0].bodyA;
