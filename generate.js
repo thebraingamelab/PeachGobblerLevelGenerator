@@ -133,7 +133,7 @@ function gen(counter = 0) {
         let bodyA = pairs[0].bodyA;
         let bodyB = pairs[0].bodyB;
 
-        // level is considered not beatable if fruit does not move
+        // level is considered not beatable if fruit does not move from starting x position
         if (bodyA === ground || bodyB === ground) {
             if (fruit[0].position.x == SCREEN_WIDTH / 2) {
                 resetTimeout();
