@@ -128,7 +128,7 @@ function gen(counter = 0) {
     Render.run(render);
 
     // level is considered not beatable if fruit does not move from starting x position
-    // deals with invalid levels
+    // one section that deals with invalid levels 
     Events.on(engine, 'collisionStart', function (event) {
         let pairs = event.pairs;
         let bodyA = pairs[0].bodyA;
