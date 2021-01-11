@@ -120,12 +120,12 @@ function gen(counter = 0) {
     // run the engine
     Engine.run(engine);
 
+    // run the renderer
+    Render.run(render);
+
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
     let timeout = setTimeout(() => { resetTimeout(); killLevel(xposs, false, 4, fruit) }, 8000);
     const resetTimeout = () => clearTimeout(timeout);
-
-    // run the renderer
-    Render.run(render);
 
     // level is considered not beatable if fruit does not move from starting x position
     // one section that deals with invalid levels 
