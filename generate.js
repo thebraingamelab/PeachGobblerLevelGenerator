@@ -114,7 +114,7 @@ function gen(counter = 0) {
     }
     shapes = shapes.concat(genshapes);
 
-    // add all of the bodies to the world
+    // add all of the bodies to the engine's world
     World.add(engine.world, shapes);
 
     // run the engine
