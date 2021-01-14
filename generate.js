@@ -1,3 +1,4 @@
+'use strict';
 // uncomment this before deploying
 //const db = firebase.firestore();
 

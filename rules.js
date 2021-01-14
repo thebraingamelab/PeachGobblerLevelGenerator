@@ -1,3 +1,4 @@
+'use strict';
 const values = {
     "fill_colors": ['red', 'green', 'blue'],
     "line_colors": ['red', 'green', 'blue'],
