@@ -1,7 +1,7 @@
 'use strict';
 const values = {
-    "fill_colors": ['red', 'green', 'blue'],
-    "line_colors": ['red', 'green', 'blue'],
+    "fillColors": ['red', 'green', 'blue'],
+    "lineColors": ['red', 'green', 'blue'],
     "shape": ['triangle', 'rectangle', 'circle']
 };
 
@@ -14,7 +14,9 @@ function makeRuleLogic() {
     return [variable[0], result];
 }
 
-let randomElement = (list) => list[Math.floor(Math.random() * list.length)];
+function randomElement(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
 
 function shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {

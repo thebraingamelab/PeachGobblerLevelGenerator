@@ -2,7 +2,7 @@
 // uncomment this before deploying
 //const db = firebase.firestore();
 
-const RULE_DEBUG_MODE = true;
+const RULE_DEBUG_MODE = false;
 
 // module aliases
 let Engine = Matter.Engine,
@@ -33,7 +33,7 @@ let engine,
     render,
 
     // these variables need to be easily accessable during subsequent runs of gen()
-    genshapes,
+    genShapes,
     encodedShapes,
     rule;
 
@@ -99,7 +99,7 @@ function gen(counter = 0) {
     engine.world.gravity.y = SIZE_FACTOR;
 
     // create all physical game objects
-    shapes = [];
+    let shapes = [];
 
     let hits = 0;
     let beatable = false;
@@ -111,9 +111,9 @@ function gen(counter = 0) {
 
     if (counter == 0) {
         if (!RULE_DEBUG_MODE) makeRule();
-        make_geometry();
+        makeGeometry();
     }
-    shapes = shapes.concat(genshapes);
+    shapes = shapes.concat(genShapes);
 
     // add all of the bodies to the engine's world
     World.add(engine.world, shapes);
@@ -126,7 +126,7 @@ function gen(counter = 0) {
 
     // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
     let timeout = setTimeout(() => { resetTimeout(); killLevel(xposs, false, 4, fruit) }, 8000);
-    const resetTimeout = () => clearTimeout(timeout);
+    function resetTimeout() { clearTimeout(timeout); }
 
     // level is considered not beatable if fruit does not move from starting x position
     // one section that deals with invalid levels 
@@ -184,26 +184,26 @@ const colorCodes = {
 }
 
 // sets the global variables with the level geometry
-function make_geometry() {
+function makeGeometry() {
     // begin level generation section
 
     // generates random number of shapes between 3 and 10
     let rand = Math.ceil(Math.random() * 7) + 2;
 
-    genshapes = [];
+    genShapes = [];
     encodedShapes = [];
 
-    let shape_centers = [];
+    let shapeCenters = [];
 
     for (let i = 0; i < rand; i++) {
 
-        let randX, randY, shape, rot, prop, center, randshape;
+        let randX, randY, shape, rot, prop, center, randShapeNum;
         let contin = false;
         let color = colorCodes[Math.floor(Math.random() * 3)];
-        let line_color = colorCodes[Math.floor(Math.random() * 3)];
+        let lineColor = colorCodes[Math.floor(Math.random() * 3)];
 
         while (!contin) {
-            randshape = Math.floor(Math.random() * 10);
+            randShapeNum = Math.floor(Math.random() * 10);
 
             randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR);
             randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
@@ -212,10 +212,10 @@ function make_geometry() {
             prop = {};
             rot;
 
-            center = [NaN, NaN];
+            let center = [NaN, NaN];
 
             // NOTE - all rotations are around the center of Matter object
-            switch (randshape) {
+            switch (randShapeNum) {
 
                 // 0 for square
                 case 0:
@@ -227,7 +227,7 @@ function make_geometry() {
                     // valid rotations are between 10 and 80 degrees
                     rot = (Math.random() * 1.22 + 0.17) * Math.PI;
 
-                    // find center of shape and add it to shape_centers
+                    // find center of shape and add it to shapeCenters
                     center[0] = randX + side / 2;
                     center[1] = randY + side / 2;
                     break;
@@ -241,7 +241,7 @@ function make_geometry() {
                     shape = Bodies.circle(randX, randY, radius, { isStatic: true });
                     rot = 0;
 
-                    // find center of shape and add it to shape_centers
+                    // find center of shape and add it to shapeCenters
                     center[0] = randX + radius;
                     center[1] = randY + radius;
                     break;
@@ -250,24 +250,24 @@ function make_geometry() {
                 // 3 for right triangle
                 case 2:
                 case 3:
-                    let slope = randshape - 1,
+                    let slope = randShapeNum - 1,
                         base = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
-                        tri_height = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                        triHeight = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
                         slope: slope,
                         width: base,
-                        height: tri_height
+                        height: triHeight
                     }
-                    shape = Bodies.trapezoid(randX, randY, base, tri_height, slope, { isStatic: true });
+                    shape = Bodies.trapezoid(randX, randY, base, triHeight, slope, { isStatic: true });
                     rot = Math.random() * 2 * Math.PI;
 
-                    // find center of shape and add it to shape_centers
+                    // find center of shape and add it to shapeCenters
                     if (rot % Math.PI < Math.PI / 4 || rot % Math.PI > 3 * Math.PI / 4) {
                         center[0] = randX + base / 2;
-                        center[1] = randY + tri_height / 2;
+                        center[1] = randY + triHeight / 2;
                     }
                     else {
-                        center[0] = randX + tri_height / 2;
+                        center[0] = randX + triHeight / 2;
                         center[1] = randY + base / 2;
                     }
                     break;
@@ -275,7 +275,7 @@ function make_geometry() {
                 // default should never trigger. added here for contingency
                 default:
                     console.log("this should not trigger");
-                    console.log(randshape);
+                    console.log(randShapeNum);
 
                 // 4-7 for rectangle
                 case 4:
@@ -298,35 +298,35 @@ function make_geometry() {
                     // 50% chance of positive or negative rotation
                     rot = Math.pow(-1, Math.floor(Math.random() * 2)) * (Math.random() * 0.61 + 0.17);
 
-                    // find center of shape and add it to shape_centers
+                    // find center of shape and add it to shapeCenters
                     center[0] = randX + width / 2;
                     center[1] = randY + height / 2;
             }
 
             // use this to determine if a shape should be placed
-            contin = place_shape(center, shape_centers);
+            contin = placeShape(center, shapeCenters);
         }
 
-        shape_centers.push(center);
+        shapeCenters.push(center);
 
         shape.collisionFilter.mask = -1;
         shape.friction = 0.05;
         shape.render.lineWidth = 10;
 
         shape.render.fillStyle = color;
-        shape.render.strokeStyle = line_color;
+        shape.render.strokeStyle = lineColor;
 
         Body.rotate(shape, rot);
-        genshapes[i] = shape;
+        genShapes[i] = shape;
 
-        encodeShape = {
+        let encodeShape = {
             xpos: randX,
             ypos: randY,
-            shapeType: randshape,
+            shapeType: randShapeNum,
             rotation: rot,
             properties: prop,
             color: color,
-            line_color: line_color
+            lineColor: lineColor
         };
         encodedShapes[i] = encodeShape;
 
@@ -357,18 +357,18 @@ function applyRules(eShape, i) {
     let input;
 
     switch (rule[0]) {
-        case "fill_colors":
+        case "fillColors":
             input = eShape.color;
             break;
-        case "line_colors":
-            input = eShape.line_color;
+        case "lineColors":
+            input = eShape.lineColor;
             break;
         case "shape":
             input = shapeCodesToShape(eShape.shapeType);
 
     }
 
-    setProperties(rule[1][input], genshapes[i]);
+    setProperties(rule[1][input], genShapes[i]);
 }
 
 // set the shapes to selected material
@@ -384,25 +384,25 @@ function setProperties(code, shape) {
 
 
 // O(n) function to find closest shape center to point
-function find_closest_distance(point, shape_centers) {
-    if (shape_centers.length == 0) {
+function findClosestDistance(point, shapeCenters) {
+    if (shapeCenters.length == 0) {
         return false;
     }
-    let min_distance = Number.MAX_SAFE_INTEGER;
-    for (center in shape_centers) {
+    let minDistance = Number.MAX_SAFE_INTEGER;
+    for (let center in shapeCenters) {
         let distance = Math.sqrt(Math.pow(point[0] - center[0], 2) + Math.pow(point[1] - center[1], 2));
-        min_distance = Math.min(distance, min_distance);
+        minDistance = Math.min(distance, minDistance);
     }
-    return min_distance;
+    return minDistance;
 }
 
 // returns a boolean which determines if a shape should be placed
-function place_shape(point, shape_centers) {
+function placeShape(point, shapeCenters) {
     const CON = -5;
 
-    let closest_distance = find_closest_distance(point, shape_centers);
-    if (closest_distance) {
-        let val = Math.pow(E, CON * closest_distance);
+    let closestDistance = findClosestDistance(point, shapeCenters);
+    if (closestDistance) {
+        let val = Math.pow(E, CON * closestDistance);
         let rand = Math.random();
         return (rand > val);
     }
@@ -438,14 +438,14 @@ function killLevel(xposs, beatable, counter = 0, fruits = null) {
 function removeOne(fruits, counter) {
     let colliders = [];
     for (let i = 0; i < fruits.length; i++) {
-        let x = genshapes.filter(shape => Matter.SAT.collides(fruits[i], shape).collided);
+        let x = genShapes.filter(shape => Matter.SAT.collides(fruits[i], shape).collided);
         colliders = colliders.concat(x);
     }
-    if (colliders.length == 0 || genshapes.length == 3) {
+    if (colliders.length == 0 || genShapes.length == 3) {
         gen();
     }
-    let i = genshapes.indexOf(colliders[parseInt(Math.random() * colliders.length)]);
-    genshapes.splice(i, 1);
+    let i = genShapes.indexOf(colliders[parseInt(Math.random() * colliders.length)]);
+    genShapes.splice(i, 1);
     encodedShapes.splice(i, 1);
     gen(counter);
 }
@@ -493,7 +493,7 @@ function saveGameplayData(sco, geo, ruleType, ruleString) {
     db.collection("PGLevels").add({
         score: sco,
         geometry: geo,
-        rule_type: ruleType,
+        ruleType: ruleType,
         rule: ruleString
     })
         .then(function (docRef) {
