@@ -28,7 +28,11 @@ let numBeatable = 0;
 let total = 0;
 let max = 0;
 
-// for some reason, engine and render need be this high level or unexpected behaviors occur
+/**
+ * for some reason, engine and render needs to be here
+ * or unexpected behaviors occur
+ */
+
 let engine,
     render,
 
@@ -41,7 +45,13 @@ let engine,
 // I have no clue why, but setting the restitution as an option during the initial set stage does not work.
 // need to set restitution property after initialization
 function createLevelBorder(x) {
-    let y = Bodies.rectangle(x, SCREEN_HEIGHT / 2, 2, SCREEN_HEIGHT, { isStatic: true });
+    let y = Bodies.rectangle(
+        x,
+        SCREEN_HEIGHT / 2,
+        2,
+        SCREEN_HEIGHT,
+        { isStatic: true }
+    );
     y.restitution = 0.5;
     return y;
 }
@@ -50,17 +60,43 @@ function createLevelBorder(x) {
 const
     border0 = createLevelBorder(0),
     border1 = createLevelBorder(SCREEN_WIDTH),
-    ground = Bodies.rectangle(SCREEN_WIDTH / 2 - 10, SCREEN_HEIGHT, SCREEN_WIDTH + 20, 400 * SIZE_FACTOR, { isStatic: true });
+    ground = Bodies.rectangle(
+        SCREEN_WIDTH / 2 - 10,
+        SCREEN_HEIGHT,
+        SCREEN_WIDTH + 20,
+        400 * SIZE_FACTOR,
+        { isStatic: true }
+    );
 ground.collisionFilter.mask = -1;
 
 // fruit construction
 function makeFruit() {
     let fruit = [];
-    fruit[0] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR, BALL_RADIUS);
-    fruit[1] = Bodies.circle(SCREEN_WIDTH / 2 + BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
-    fruit[2] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR + BALL_RADIUS / 5, BALL_RADIUS);
-    fruit[3] = Bodies.circle(SCREEN_WIDTH / 2 - BALL_RADIUS / 5, 150 * SIZE_FACTOR, BALL_RADIUS);
-    fruit[4] = Bodies.circle(SCREEN_WIDTH / 2, 150 * SIZE_FACTOR - BALL_RADIUS / 5, BALL_RADIUS);
+    fruit[0] = Bodies.circle(
+        SCREEN_WIDTH / 2,
+        150 * SIZE_FACTOR,
+        BALL_RADIUS
+    );
+    fruit[1] = Bodies.circle(
+        SCREEN_WIDTH / 2 + BALL_RADIUS / 5,
+        150 * SIZE_FACTOR,
+        BALL_RADIUS
+    );
+    fruit[2] = Bodies.circle(
+        SCREEN_WIDTH / 2,
+        150 * SIZE_FACTOR + BALL_RADIUS / 5,
+        BALL_RADIUS
+    );
+    fruit[3] = Bodies.circle(
+        SCREEN_WIDTH / 2 - BALL_RADIUS / 5,
+        150 * SIZE_FACTOR,
+        BALL_RADIUS
+    );
+    fruit[4] = Bodies.circle(
+        SCREEN_WIDTH / 2,
+        150 * SIZE_FACTOR - BALL_RADIUS / 5,
+        BALL_RADIUS
+    );
 
     for (let i = 0; i < fruit.length; i++) {
         fruit[i].collisionFilter.group = -1;
@@ -76,7 +112,9 @@ function makeRule() {
     rule = makeRuleLogic();
     // for debugging purposes only
     let swappedRule = swap(rule[1]);
-    console.log(`Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
+    console.log(
+        `Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, 
+        ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
 }
 
 // most important function
@@ -109,7 +147,7 @@ function gen(counter = 0) {
 
     shapes = [ground, border0, border1].concat(fruit);
 
-    if (counter == 0) {
+    if (counter === 0) {
         if (!RULE_DEBUG_MODE) makeRule();
         makeGeometry();
     }
@@ -124,11 +162,13 @@ function gen(counter = 0) {
     // run the renderer
     Render.run(render);
 
-    // sets timer for that kills the level and generates a new one after 8 seconds of inactivity
-    let timeout = setTimeout(() => { resetTimeout(); killLevel(xposs, false, 4, fruit) }, 8000);
+    // sets timer for that kills the level after 8 seconds of inactivity
+    let timeout = setTimeout(() => {
+        resetTimeout(); killLevel(xposs, false, 4, fruit)
+    }, 8000);
     function resetTimeout() { clearTimeout(timeout); }
 
-    // level is considered not beatable if fruit does not move from starting x position
+    // level is considered not beatable if fruit does not move in x plane
     // one section that deals with invalid levels 
     Events.on(engine, 'collisionStart', function (event) {
         let pairs = event.pairs;
@@ -136,7 +176,7 @@ function gen(counter = 0) {
         let bodyB = pairs[0].bodyB;
 
         if (bodyA === ground || bodyB === ground) {
-            if (fruit[0].position.x == SCREEN_WIDTH / 2) {
+            if (fruit[0].position.x === SCREEN_WIDTH / 2) {
                 resetTimeout();
                 killLevel(xposs, false);
             }
@@ -150,7 +190,8 @@ function gen(counter = 0) {
         let bodyB = pairs[0].bodyB;
 
         for (let i = 0; i < fruit.length; i++) {
-            if ((bodyA === ground || bodyB === ground) && (bodyA === fruit[i] || bodyB === fruit[i])) {
+            if ((bodyA === ground || bodyB === ground) &&
+                (bodyA === fruit[i] || bodyB === fruit[i])) {
                 xposs[i] = fruit[i].position.x;
 
                 // teleports fruits off screen to avoid extra collisions
@@ -205,8 +246,10 @@ function makeGeometry() {
         while (!contin) {
             randShapeNum = Math.floor(Math.random() * 10);
 
-            randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR) + 100 * SIZE_FACTOR);
-            randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR) + 250 * SIZE_FACTOR);
+            randX = (Math.random() * (SCREEN_WIDTH - 200 * SIZE_FACTOR)
+                + 100 * SIZE_FACTOR);
+            randY = (Math.random() * (SCREEN_HEIGHT - 585 * SIZE_FACTOR)
+                + 250 * SIZE_FACTOR);
 
             shape;
             prop = {};
@@ -219,11 +262,18 @@ function makeGeometry() {
 
                 // 0 for square
                 case 0:
-                    let side = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                    let side = (Math.random() * (100 - BALL_RADIUS))
+                        * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
                         length: side
                     };
-                    shape = Bodies.rectangle(randX, randY, side, side, { isStatic: true });
+                    shape = Bodies.rectangle(
+                        randX,
+                        randY,
+                        side,
+                        side,
+                        { isStatic: true }
+                    );
                     // valid rotations are between 10 and 80 degrees
                     rot = (Math.random() * 1.22 + 0.17) * Math.PI;
 
@@ -234,11 +284,17 @@ function makeGeometry() {
 
                 // 1 for circle
                 case 1:
-                    let radius = (Math.random() * (100 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                    let radius = (Math.random() * (100 - BALL_RADIUS))
+                        * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
                         radius: radius
                     };
-                    shape = Bodies.circle(randX, randY, radius, { isStatic: true });
+                    shape = Bodies.circle(
+                        randX,
+                        randY,
+                        radius,
+                        { isStatic: true }
+                    );
                     rot = 0;
 
                     // find center of shape and add it to shapeCenters
@@ -251,18 +307,28 @@ function makeGeometry() {
                 case 2:
                 case 3:
                     let slope = randShapeNum - 1,
-                        base = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
-                        triHeight = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS;
+                        base = (Math.random() * (200 - BALL_RADIUS))
+                            * SIZE_FACTOR + BALL_RADIUS,
+                        triHeight = (Math.random() * (200 - BALL_RADIUS))
+                            * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
                         slope: slope,
                         width: base,
                         height: triHeight
                     }
-                    shape = Bodies.trapezoid(randX, randY, base, triHeight, slope, { isStatic: true });
+                    shape = Bodies.trapezoid(
+                        randX,
+                        randY,
+                        base,
+                        triHeight,
+                        slope,
+                        { isStatic: true }
+                    );
                     rot = Math.random() * 2 * Math.PI;
 
                     // find center of shape and add it to shapeCenters
-                    if (rot % Math.PI < Math.PI / 4 || rot % Math.PI > 3 * Math.PI / 4) {
+                    if (rot % Math.PI < Math.PI / 4
+                        || rot % Math.PI > 3 * Math.PI / 4) {
                         center[0] = randX + base / 2;
                         center[1] = randY + triHeight / 2;
                     }
@@ -284,7 +350,8 @@ function makeGeometry() {
                 case 7:
                 case 8:
                 case 9:
-                    let width = (Math.random() * (200 - BALL_RADIUS)) * SIZE_FACTOR + BALL_RADIUS,
+                    let width = (Math.random() * (200 - BALL_RADIUS))
+                        * SIZE_FACTOR + BALL_RADIUS,
                         height = width / (Math.ceil((Math.random() * 5)) + 1);
                     prop = {
                         width: width,
@@ -293,10 +360,14 @@ function makeGeometry() {
                     shape = Bodies.rectangle(randX, randY, width, height, {
                         isStatic: true
                     });
-                    // valid rotations are between -45 and -10 degrees and 10 and 45 degrees
-                    // multiply decimals and pi to make rough radian amounts
-                    // 50% chance of positive or negative rotation
-                    rot = Math.pow(-1, Math.floor(Math.random() * 2)) * (Math.random() * 0.61 + 0.17);
+                    /* 
+                     * valid rotations are between -45 and -10 degrees 
+                     * and 10 and 45 degrees
+                     * multiply decimals and pi to make rough radian amounts
+                     * 50% chance of positive or negative rotation 
+                     */
+                    rot = Math.pow(-1, Math.floor(Math.random() * 2))
+                        * (Math.random() * 0.61 + 0.17);
 
                     // find center of shape and add it to shapeCenters
                     center[0] = randX + width / 2;
@@ -385,12 +456,14 @@ function setProperties(code, shape) {
 
 // O(n) function to find closest shape center to point
 function findClosestDistance(point, shapeCenters) {
-    if (shapeCenters.length == 0) {
+    if (shapeCenters.length === 0) {
         return false;
     }
     let minDistance = Number.MAX_SAFE_INTEGER;
     for (let center in shapeCenters) {
-        let distance = Math.sqrt(Math.pow(point[0] - center[0], 2) + Math.pow(point[1] - center[1], 2));
+        let distance = Math.sqrt(
+            Math.pow(point[0] - center[0], 2) + Math.pow(point[1] - center[1], 2)
+        );
         minDistance = Math.min(distance, minDistance);
     }
     return minDistance;
@@ -424,8 +497,10 @@ function killLevel(xposs, beatable, counter = 0, fruits = null) {
 
     total++;
 
-    console.log(`Ratio: ${numBeatable} : ${total} (${100 * numBeatable / total}%)`);
-    if (counter != 0) {
+    console.log(
+        `Ratio: ${numBeatable} : ${total} (${100 * numBeatable / total}%)`
+    );
+    if (counter !== 0) {
         removeOne(fruits, counter);
     }
     else {
@@ -438,13 +513,15 @@ function killLevel(xposs, beatable, counter = 0, fruits = null) {
 function removeOne(fruits, counter) {
     let colliders = [];
     for (let i = 0; i < fruits.length; i++) {
-        let x = genShapes.filter(shape => Matter.SAT.collides(fruits[i], shape).collided);
+        let x = genShapes.filter(shape =>
+            Matter.SAT.collides(fruits[i], shape).collided);
         colliders = colliders.concat(x);
     }
-    if (colliders.length == 0 || genShapes.length == 3) {
+    if (colliders.length === 0 || genShapes.length === 3) {
         gen();
     }
-    let i = genShapes.indexOf(colliders[parseInt(Math.random() * colliders.length)]);
+    let i =
+        genShapes.indexOf(colliders[parseInt(Math.random() * colliders.length)]);
     genShapes.splice(i, 1);
     encodedShapes.splice(i, 1);
     gen(counter);
