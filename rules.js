@@ -6,8 +6,8 @@ const values = {
 };
 
 function makeRuleLogic() {
-    let variable = randomElement(Object.entries(values));
-    let randArray = shuffle([0, 1, 2]);
+    const variable = randomElement(Object.entries(values));
+    const randArray = shuffle([0, 1, 2]);
     let result = {};
 
     variable[1].forEach((key, i) => result[key] = randArray[i])

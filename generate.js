@@ -5,7 +5,8 @@
 const RULE_DEBUG_MODE = false;
 
 // module aliases
-let Engine = Matter.Engine,
+const
+    Engine = Matter.Engine,
     Render = Matter.Render,
     World = Matter.World,
     Bodies = Matter.Bodies,
@@ -35,15 +36,18 @@ let max = 0;
 
 let engine,
     render,
-
-    // these variables need to be easily accessable during subsequent runs of gen()
+    // these variables need to be easily accessable during subsequent gens
     genShapes,
     encodedShapes,
     rule;
 
 
-// I have no clue why, but setting the restitution as an option during the initial set stage does not work.
-// need to set restitution property after initialization
+
+/**
+ * I have no clue why, but setting the restitution as an option during the 
+ * initial set stage does not work.
+ * Needs to set restitution property after initialization
+ */
 function createLevelBorder(x) {
     let y = Bodies.rectangle(
         x,
@@ -56,69 +60,76 @@ function createLevelBorder(x) {
     return y;
 }
 
-// constant level geometry
-const
-    border0 = createLevelBorder(0),
-    border1 = createLevelBorder(SCREEN_WIDTH),
-    ground = Bodies.rectangle(
-        SCREEN_WIDTH / 2 - 10,
-        SCREEN_HEIGHT,
-        SCREEN_WIDTH + 20,
-        400 * SIZE_FACTOR,
-        { isStatic: true }
-    );
-ground.collisionFilter.mask = -1;
-
 // fruit construction
 function makeFruit() {
-    let fruit = [];
-    fruit[0] = Bodies.circle(
-        SCREEN_WIDTH / 2,
-        150 * SIZE_FACTOR,
-        BALL_RADIUS
-    );
-    fruit[1] = Bodies.circle(
-        SCREEN_WIDTH / 2 + BALL_RADIUS / 5,
-        150 * SIZE_FACTOR,
-        BALL_RADIUS
-    );
-    fruit[2] = Bodies.circle(
-        SCREEN_WIDTH / 2,
-        150 * SIZE_FACTOR + BALL_RADIUS / 5,
-        BALL_RADIUS
-    );
-    fruit[3] = Bodies.circle(
-        SCREEN_WIDTH / 2 - BALL_RADIUS / 5,
-        150 * SIZE_FACTOR,
-        BALL_RADIUS
-    );
-    fruit[4] = Bodies.circle(
-        SCREEN_WIDTH / 2,
-        150 * SIZE_FACTOR - BALL_RADIUS / 5,
-        BALL_RADIUS
-    );
+    const params = [
+        [
+            SCREEN_WIDTH / 2,
+            150 * SIZE_FACTOR,
+            BALL_RADIUS
+        ],
+        [
+            SCREEN_WIDTH / 2 + BALL_RADIUS / 5,
+            150 * SIZE_FACTOR,
+            BALL_RADIUS
+        ],
+        [
+            SCREEN_WIDTH / 2,
+            150 * SIZE_FACTOR + BALL_RADIUS / 5,
+            BALL_RADIUS
+        ],
+        [
+            SCREEN_WIDTH / 2 - BALL_RADIUS / 5,
+            150 * SIZE_FACTOR,
+            BALL_RADIUS
+        ],
+        [
+            SCREEN_WIDTH / 2,
+            150 * SIZE_FACTOR - BALL_RADIUS / 5,
+            BALL_RADIUS
+        ]
+    ];
 
-    for (let i = 0; i < fruit.length; i++) {
-        fruit[i].collisionFilter.group = -1;
-        fruit[i].restitution = 0;
-        fruit[i].render.strokeStyle = 'white';
-        fruit[i].render.lineWidth = 3;
-    }
+    return params.map(setFruit);
+}
 
-    return fruit
+// intitializes individual fruit
+function setFruit(param) {
+    let fruit = Bodies.circle(...param);
+    fruit.collisionFilter.group = -1;
+    fruit.restitution = 0;
+    fruit.render.strokeStyle = 'white';
+    fruit.render.lineWidth = 3;
+    return fruit;
 }
 
 function makeRule() {
     rule = makeRuleLogic();
+
     // for debugging purposes only
-    let swappedRule = swap(rule[1]);
+    const swappedRule = swap(rule[1]);
     console.log(
-        `Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, 
-        ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`);
+        `Rule is based on: ${rule[0]}\n${swappedRule[0]} is normal, ${swappedRule[1]} is bouncey, ${swappedRule[2]} is icey`
+    );
 }
 
 // most important function
 function gen(counter = 0) {
+    // constant level geometry
+    const
+        border0 = createLevelBorder(0),
+        border1 = createLevelBorder(SCREEN_WIDTH),
+        ground = Bodies.rectangle(
+            SCREEN_WIDTH / 2 - 10,
+            SCREEN_HEIGHT,
+            SCREEN_WIDTH + 20,
+            400 * SIZE_FACTOR,
+            { isStatic: true }
+        ),
+        fruit = makeFruit();
+    ground.collisionFilter.mask = -1;
+
+
     // create an engine
     engine = Engine.create();
 
@@ -142,8 +153,6 @@ function gen(counter = 0) {
     let hits = 0;
     let beatable = false;
     let xposs = [];
-
-    let fruit = makeFruit();
 
     shapes = [ground, border0, border1].concat(fruit);
 
@@ -171,11 +180,10 @@ function gen(counter = 0) {
     // level is considered not beatable if fruit does not move in x plane
     // one section that deals with invalid levels 
     Events.on(engine, 'collisionStart', function (event) {
-        let pairs = event.pairs;
-        let bodyA = pairs[0].bodyA;
-        let bodyB = pairs[0].bodyB;
+        const { bodyA: bodyA, bodyB: bodyB } = event.pairs[0];
 
-        if (bodyA === ground || bodyB === ground) {
+        if ((bodyA === ground || bodyB === ground) &&
+            (bodyA === fruit[0] || bodyB === fruit[0])) {
             if (fruit[0].position.x === SCREEN_WIDTH / 2) {
                 resetTimeout();
                 killLevel(xposs, false);
@@ -185,9 +193,7 @@ function gen(counter = 0) {
 
     // deals with detecting collisions on floor
     Events.on(engine, 'collisionActive', function (event) {
-        let pairs = event.pairs;
-        let bodyA = pairs[0].bodyA;
-        let bodyB = pairs[0].bodyB;
+        const { bodyA: bodyA, bodyB: bodyB } = event.pairs[0];
 
         for (let i = 0; i < fruit.length; i++) {
             if ((bodyA === ground || bodyB === ground) &&
@@ -218,6 +224,10 @@ function gen(counter = 0) {
     });
 }
 
+function fruitAndGround(bodyA, bodyB, primeFruit, ground) {
+
+}
+
 const colorCodes = {
     0: 'green',
     1: 'blue',
@@ -229,7 +239,7 @@ function makeGeometry() {
     // begin level generation section
 
     // generates random number of shapes between 3 and 10
-    let rand = Math.ceil(Math.random() * 7) + 2;
+    const rand = Math.ceil(Math.random() * 7) + 2;
 
     genShapes = [];
     encodedShapes = [];
@@ -237,11 +247,11 @@ function makeGeometry() {
     let shapeCenters = [];
 
     for (let i = 0; i < rand; i++) {
+        const color = colorCodes[Math.floor(Math.random() * 3)];
+        const lineColor = colorCodes[Math.floor(Math.random() * 3)];
 
         let randX, randY, shape, rot, prop, center, randShapeNum;
         let contin = false;
-        let color = colorCodes[Math.floor(Math.random() * 3)];
-        let lineColor = colorCodes[Math.floor(Math.random() * 3)];
 
         while (!contin) {
             randShapeNum = Math.floor(Math.random() * 10);
@@ -262,7 +272,7 @@ function makeGeometry() {
 
                 // 0 for square
                 case 0:
-                    let side = (Math.random() * (100 - BALL_RADIUS))
+                    const side = (Math.random() * (100 - BALL_RADIUS))
                         * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
                         length: side
@@ -284,7 +294,7 @@ function makeGeometry() {
 
                 // 1 for circle
                 case 1:
-                    let radius = (Math.random() * (100 - BALL_RADIUS))
+                    const radius = (Math.random() * (100 - BALL_RADIUS))
                         * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
                         radius: radius
@@ -306,7 +316,7 @@ function makeGeometry() {
                 // 3 for right triangle
                 case 2:
                 case 3:
-                    let slope = randShapeNum - 1,
+                    const slope = randShapeNum - 1,
                         base = (Math.random() * (200 - BALL_RADIUS))
                             * SIZE_FACTOR + BALL_RADIUS,
                         triHeight = (Math.random() * (200 - BALL_RADIUS))
@@ -350,7 +360,7 @@ function makeGeometry() {
                 case 7:
                 case 8:
                 case 9:
-                    let width = (Math.random() * (200 - BALL_RADIUS))
+                    const width = (Math.random() * (200 - BALL_RADIUS))
                         * SIZE_FACTOR + BALL_RADIUS,
                         height = width / (Math.ceil((Math.random() * 5)) + 1);
                     prop = {
@@ -390,7 +400,7 @@ function makeGeometry() {
         Body.rotate(shape, rot);
         genShapes[i] = shape;
 
-        let encodeShape = {
+        const encodeShape = {
             xpos: randX,
             ypos: randY,
             shapeType: randShapeNum,
@@ -461,7 +471,7 @@ function findClosestDistance(point, shapeCenters) {
     }
     let minDistance = Number.MAX_SAFE_INTEGER;
     for (let center in shapeCenters) {
-        let distance = Math.sqrt(
+        const distance = Math.sqrt(
             Math.pow(point[0] - center[0], 2) + Math.pow(point[1] - center[1], 2)
         );
         minDistance = Math.min(distance, minDistance);
@@ -473,10 +483,10 @@ function findClosestDistance(point, shapeCenters) {
 function placeShape(point, shapeCenters) {
     const CON = -5;
 
-    let closestDistance = findClosestDistance(point, shapeCenters);
+    const closestDistance = findClosestDistance(point, shapeCenters);
     if (closestDistance) {
-        let val = Math.pow(E, CON * closestDistance);
-        let rand = Math.random();
+        const val = Math.pow(E, CON * closestDistance);
+        const rand = Math.random();
         return (rand > val);
     }
     return true;
@@ -513,14 +523,14 @@ function killLevel(xposs, beatable, counter = 0, fruits = null) {
 function removeOne(fruits, counter) {
     let colliders = [];
     for (let i = 0; i < fruits.length; i++) {
-        let x = genShapes.filter(shape =>
+        const x = genShapes.filter(shape =>
             Matter.SAT.collides(fruits[i], shape).collided);
         colliders = colliders.concat(x);
     }
     if (colliders.length === 0 || genShapes.length === 3) {
         gen();
     }
-    let i =
+    const i =
         genShapes.indexOf(colliders[parseInt(Math.random() * colliders.length)]);
     genShapes.splice(i, 1);
     encodedShapes.splice(i, 1);
@@ -547,7 +557,7 @@ function variance(nums) {
 // Uses variance formula as proxy
 function score(xposs) {
     numBeatable++;
-    let vari = variance(xposs);
+    const vari = variance(xposs);
 
     // uncomment this before deploying
     //saveGameplayData(vari, JSON.stringify(encodedShapes), rule[0], JSON.stringify(rule[1]);
@@ -558,8 +568,8 @@ function score(xposs) {
 // swaps key with value in dictionary
 // for debugging purposes only
 function swap(json) {
-    var ret = {};
-    for (var key in json) {
+    let ret = {};
+    for (let key in json) {
         ret[json[key]] = key;
     }
     return ret;
