@@ -5,13 +5,12 @@
 const RULE_DEBUG_MODE = false;
 
 // module aliases
-const
-    Engine = Matter.Engine,
-    Render = Matter.Render,
-    World = Matter.World,
-    Bodies = Matter.Bodies,
-    Body = Matter.Body,
-    Events = Matter.Events;
+const Engine = Matter.Engine;
+const Render = Matter.Render;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+const Events = Matter.Events;
 
 const canv = canvas;
 
@@ -34,12 +33,13 @@ let max = 0;
  * or unexpected behaviors occur
  */
 
-let engine,
-    render,
-    // these variables need to be easily accessable during subsequent gens
-    genShapes,
-    encodedShapes,
-    rule;
+let engine;
+let render;
+
+// these variables need to be easily accessable during subsequent gens
+let genShapes;
+let encodedShapes;
+let rule;
 
 
 
@@ -48,16 +48,16 @@ let engine,
  * initial set stage does not work.
  * Needs to set restitution property after initialization
  */
-function createLevelBorder(x) {
-    let y = Bodies.rectangle(
-        x,
+function createLevelBorder(xPos) {
+    let border = Bodies.rectangle(
+        xPos,
         SCREEN_HEIGHT / 2,
         2,
         SCREEN_HEIGHT,
         { isStatic: true }
     );
-    y.restitution = 0.5;
-    return y;
+    border.restitution = 0.5;
+    return border;
 }
 
 // fruit construction
@@ -179,11 +179,10 @@ function gen(counter = 0) {
 
     // level is considered not beatable if fruit does not move in x plane
     // one section that deals with invalid levels 
-    Events.on(engine, 'collisionStart', function (event) {
-        const { bodyA: bodyA, bodyB: bodyB } = event.pairs[0];
+    Events.on(engine, 'collisionStart', function ({ pairs }) {
+        const { bodyA, bodyB } = pairs[0];
 
-        if ((bodyA === ground || bodyB === ground) &&
-            (bodyA === fruit[0] || bodyB === fruit[0])) {
+        if (fruitAndGround(bodyA, bodyB, fruit[0], ground)) {
             if (fruit[0].position.x === SCREEN_WIDTH / 2) {
                 resetTimeout();
                 killLevel(xposs, false);
@@ -192,12 +191,11 @@ function gen(counter = 0) {
     });
 
     // deals with detecting collisions on floor
-    Events.on(engine, 'collisionActive', function (event) {
-        const { bodyA: bodyA, bodyB: bodyB } = event.pairs[0];
+    Events.on(engine, 'collisionActive', function ({ pairs }) {
+        const { bodyA, bodyB } = pairs[0];
 
         for (let i = 0; i < fruit.length; i++) {
-            if ((bodyA === ground || bodyB === ground) &&
-                (bodyA === fruit[i] || bodyB === fruit[i])) {
+            if (fruitAndGround(bodyA, bodyB, fruit[i], ground)) {
                 xposs[i] = fruit[i].position.x;
 
                 // teleports fruits off screen to avoid extra collisions
@@ -224,8 +222,11 @@ function gen(counter = 0) {
     });
 }
 
-function fruitAndGround(bodyA, bodyB, primeFruit, ground) {
-
+function fruitAndGround(bodyA, bodyB, fruit, ground) {
+    return (
+        (bodyA === ground || bodyB === ground) &&
+        (bodyA === fruit || bodyB === fruit)
+    );
 }
 
 const colorCodes = {
@@ -250,7 +251,14 @@ function makeGeometry() {
         const color = colorCodes[Math.floor(Math.random() * 3)];
         const lineColor = colorCodes[Math.floor(Math.random() * 3)];
 
-        let randX, randY, shape, rot, prop, center, randShapeNum;
+        let randX;
+        let randY;
+        let shape;
+        let rot;
+        let prop;
+        let randShapeNum;
+        let center;
+
         let contin = false;
 
         while (!contin) {
@@ -265,7 +273,7 @@ function makeGeometry() {
             prop = {};
             rot;
 
-            let center = [NaN, NaN];
+            center = [NaN, NaN];
 
             // NOTE - all rotations are around the center of Matter object
             switch (randShapeNum) {
@@ -322,7 +330,7 @@ function makeGeometry() {
                         triHeight = (Math.random() * (200 - BALL_RADIUS))
                             * SIZE_FACTOR + BALL_RADIUS;
                     prop = {
-                        slope: slope,
+                        slope,
                         width: base,
                         height: triHeight
                     }
@@ -350,7 +358,7 @@ function makeGeometry() {
 
                 // default should never trigger. added here for contingency
                 default:
-                    console.log("this should not trigger");
+                    console.log('this should not trigger');
                     console.log(randShapeNum);
 
                 // 4-7 for rectangle
@@ -364,8 +372,8 @@ function makeGeometry() {
                         * SIZE_FACTOR + BALL_RADIUS,
                         height = width / (Math.ceil((Math.random() * 5)) + 1);
                     prop = {
-                        width: width,
-                        height: height
+                        width,
+                        height
                     };
                     shape = Bodies.rectangle(randX, randY, width, height, {
                         isStatic: true
@@ -406,8 +414,8 @@ function makeGeometry() {
             shapeType: randShapeNum,
             rotation: rot,
             properties: prop,
-            color: color,
-            lineColor: lineColor
+            color,
+            lineColor
         };
         encodedShapes[i] = encodeShape;
 
@@ -425,27 +433,27 @@ function shapeCodesToShape(shapeType) {
         case 7:
         case 8:
         case 9:
-            return "rectangle";
+            return 'rectangle';
         case 1:
-            return "circle";
+            return 'circle';
         default:
-            return "triangle";
+            return 'triangle';
     }
 }
 
 // get shape info and convert it to material type based on rules
-function applyRules(eShape, i) {
+function applyRules({ color, lineColor, shapeType }, i) {
     let input;
 
     switch (rule[0]) {
-        case "fillColors":
-            input = eShape.color;
+        case 'fillColors':
+            input = color;
             break;
-        case "lineColors":
-            input = eShape.lineColor;
+        case 'lineColors':
+            input = lineColor;
             break;
-        case "shape":
-            input = shapeCodesToShape(eShape.shapeType);
+        case 'shape':
+            input = shapeCodesToShape(shapeType);
 
     }
 
@@ -494,7 +502,7 @@ function placeShape(point, shapeCenters) {
 
 // stops render and engine and makes it ready to restart
 function killLevel(xposs, beatable, counter = 0, fruits = null) {
-    console.log("Score:", beatable ? score(xposs) : -1);
+    console.log('Score:', beatable ? score(xposs) : -1);
 
     Render.stop(render);
     World.clear(engine.world);
@@ -576,18 +584,18 @@ function swap(json) {
 }
 
 // Uploads data to cloud firestore
-function saveGameplayData(sco, geo, ruleType, ruleString) {
-    db.collection("PGLevels").add({
-        score: sco,
-        geometry: geo,
-        ruleType: ruleType,
-        rule: ruleString
+function saveGameplayData(score, geometry, ruleType, rule) {
+    db.collection('PGLevels').add({
+        score,
+        geometry,
+        ruleType,
+        rule
     })
         .then(function (docRef) {
-            console.log("Document written with ID: ", docRef.id);
+            console.log('Document written with ID: ', docRef.id);
         })
         .catch(function (error) {
-            console.error("Error adding document: ", error);
+            console.error('Error adding document: ', error);
         });
 }
 

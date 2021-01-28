@@ -1,8 +1,8 @@
 'use strict';
 const values = {
-    "fillColors": ['red', 'green', 'blue'],
-    "lineColors": ['red', 'green', 'blue'],
-    "shape": ['triangle', 'rectangle', 'circle']
+    fillColors: ['red', 'green', 'blue'],
+    lineColors: ['red', 'green', 'blue'],
+    shape: ['triangle', 'rectangle', 'circle']
 };
 
 function makeRuleLogic() {
@@ -18,10 +18,10 @@ function randomElement(list) {
     return list[Math.floor(Math.random() * list.length)];
 }
 
-function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return a;
+    return arr;
 }
